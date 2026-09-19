@@ -18,7 +18,8 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Excipient Screen",
-  description: "Decision support for excipient and protein screening. Not a certification of safety.",
+  description:
+    "Decision support for excipient and protein screening. Not a certification of safety.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

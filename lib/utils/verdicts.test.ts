@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { GRADE_ORDER, GRADES, SEVERITY, VERDICTS, verdictStyle } from "./verdicts";
 

@@ -9,7 +9,12 @@ export default defineConfig({
     baseURL: "http://localhost:3100",
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } }],
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+  ],
   webServer: {
     command: "corepack pnpm dev --port 3100",
     url: "http://localhost:3100",

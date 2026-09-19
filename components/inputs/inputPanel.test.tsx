@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { configure, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ShellData } from "@/components/shell/types";
@@ -81,7 +81,11 @@ async function fillValidPdb(user: ReturnType<typeof userEvent.setup>) {
   await user.type(panel().getByRole("textbox", { name: "Excipient concentration" }), "0.2");
 }
 
-describe("input panel", () => {
+// Whole-Screen integration tests with many keystrokes: 1.5–4.5 s each in jsdom depending on
+// machine load, so the 5 s default timed out under a busy full-suite run. Assertions unchanged.
+configure({ asyncUtilTimeout: 3000 });
+
+describe("input panel", { timeout: 15_000 }, () => {
   it("starts empty with SC and 25 °C selected and no Draw structure button", () => {
     render(<Screen data={data} />);
     expect(panel().getByRole("textbox", { name: "Name, CAS or SMILES" })).toHaveValue("");
@@ -243,12 +247,17 @@ describe("input panel", () => {
       "false",
     );
     expect(panel().getByRole("textbox", { name: "Protein dose" })).toHaveValue("150");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Polysorbate 80 × 1N8Z Fab",
+    // Load example starts the run (Build 03); the title arrives when startRun resolves.
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+        "Polysorbate 80 × 1N8Z Fab",
+      ),
     );
 
     await user.click(screen.getByRole("button", { name: "Run screen" }));
-    expect(startRun.mock.calls[0]?.[0]).toMatchObject({
+    // The last call is Run screen's (the first is the run Load example started).
+    await waitFor(() => expect(startRun).toHaveBeenCalledTimes(2));
+    expect(startRun.mock.calls.at(-1)?.[0]).toMatchObject({
       excipient: { polymer: { residualMonomers: ["Ethylene oxide", "1,4-dioxane"] } },
     });
   });

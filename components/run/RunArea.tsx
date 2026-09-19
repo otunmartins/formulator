@@ -3,6 +3,7 @@
 import { EmptyState } from "@/components/shell/EmptyState";
 import { useScreen } from "@/components/shell/screenState";
 import { stepKeys, type Steps } from "@/lib/types/domain";
+import { IdentityResolver } from "./IdentityResolver";
 import { ProgressStrip } from "./ProgressStrip";
 import { SkeletonMatrix } from "./SkeletonMatrix";
 import { useRunEvents } from "./useRunEvents";
@@ -17,7 +18,8 @@ export function currentStepNumber(steps: Steps): number {
 
 /**
  * The run's progress strip and whatever sits under it for the loaded run's state: the empty
- * card before a run, a skeleton matrix while it runs (S04).
+ * card before a run, a skeleton matrix while it runs (S04), the identity card while it is
+ * paused (S05).
  */
 export function RunArea() {
   useRunEvents();
@@ -30,6 +32,13 @@ export function RunArea() {
       <ProgressStrip steps={hasRun ? (events?.steps ?? null) : null} />
       {!hasRun ? (
         <EmptyState />
+      ) : events?.runState === "identity_unresolved" ? (
+        <IdentityResolver
+          key={events.runId}
+          runId={events.runId}
+          query={events.query}
+          candidates={events.candidates ?? []}
+        />
       ) : (
         <SkeletonMatrix step={events ? currentStepNumber(events.steps) : 1} />
       )}

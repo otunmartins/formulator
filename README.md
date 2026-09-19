@@ -15,21 +15,21 @@ pnpm dev                           # http://localhost:3000
 
 ## Scripts
 
-| Script | What it does |
-|---|---|
-| `pnpm dev` | Dev server |
-| `pnpm build` | Production build |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm lint` | ESLint (Next + TypeScript + jsx-a11y) |
-| `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm test` | Unit and component tests (Vitest + Testing Library) |
-| `pnpm test:e2e` | End-to-end tests (Playwright, reuses or starts the dev server on port 3000) |
+| Script                              | What it does                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`                          | Dev server                                                                  |
+| `pnpm build`                        | Production build                                                            |
+| `pnpm typecheck`                    | `next typegen` + `tsc --noEmit`                                             |
+| `pnpm lint`                         | ESLint (Next + TypeScript + jsx-a11y)                                       |
+| `pnpm format` / `pnpm format:check` | Prettier                                                                    |
+| `pnpm test`                         | Unit and component tests (Vitest + Testing Library)                         |
+| `pnpm test:e2e`                     | End-to-end tests (Playwright, reuses or starts the dev server on port 3000) |
 
 ## Environment
 
-| Variable | Default | Notes |
-|---|---|---|
-| `USE_MOCKS` | `true` | Server-only. Read only by `lib/data/`. Phase 1 supports only mocks. |
+| Variable    | Default | Notes                                                               |
+| ----------- | ------- | ------------------------------------------------------------------- |
+| `USE_MOCKS` | `true`  | Server-only. Read only by `lib/data/`. Phase 1 supports only mocks. |
 
 ## Working on it
 

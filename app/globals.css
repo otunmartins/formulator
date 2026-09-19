@@ -93,8 +93,8 @@
 }
 
 @theme {
-  /* Input panel narrows below this width (tablet). */
-  --breakpoint-desk: 1180px;
+  /* The input panel narrows at 1180px and below (tablet). */
+  --breakpoint-desk: 1181px;
 }
 
 html {

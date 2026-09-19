@@ -16,6 +16,8 @@ export interface ScreenState {
   mode: Mode;
   panelCollapsed: boolean;
   header: LoadedHeader;
+  /** True while a run or the example is being fetched into the header. */
+  headerLoading: boolean;
   drawer: "ask" | "manifest" | null;
   openMenu: OpenMenu;
 }
@@ -23,6 +25,7 @@ export interface ScreenState {
 export type ScreenAction =
   | { type: "setMode"; mode: Mode }
   | { type: "setPanelCollapsed"; collapsed: boolean }
+  | { type: "headerLoading"; loading: boolean }
   | { type: "loadRun"; run: RunSummary }
   | { type: "loadExample"; example: Example }
   | { type: "workspaceChanged" }
@@ -35,6 +38,7 @@ export const initialScreenState: ScreenState = {
   mode: "single",
   panelCollapsed: false,
   header: { kind: "empty" },
+  headerLoading: false,
   drawer: null,
   openMenu: null,
 };
@@ -45,13 +49,25 @@ export function screenReducer(state: ScreenState, action: ScreenAction): ScreenS
       return { ...state, mode: action.mode };
     case "setPanelCollapsed":
       return { ...state, panelCollapsed: action.collapsed };
+    case "headerLoading":
+      return { ...state, headerLoading: action.loading };
     case "loadRun":
-      return { ...state, mode: action.run.kind, header: { kind: "run", run: action.run } };
+      return {
+        ...state,
+        mode: action.run.kind,
+        header: { kind: "run", run: action.run },
+        headerLoading: false,
+      };
     case "loadExample":
-      return { ...state, mode: "single", header: { kind: "example", example: action.example } };
+      return {
+        ...state,
+        mode: "single",
+        header: { kind: "example", example: action.example },
+        headerLoading: false,
+      };
     case "workspaceChanged":
       // A loaded run belonged to the previous workspace; start a fresh screen.
-      return { ...state, header: { kind: "empty" }, openMenu: null };
+      return { ...state, header: { kind: "empty" }, headerLoading: false, openMenu: null };
     case "openDrawer":
       return { ...state, drawer: action.drawer, openMenu: null };
     case "closeDrawer":

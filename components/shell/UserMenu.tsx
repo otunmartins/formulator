@@ -26,7 +26,7 @@ export function UserMenu({ user, workspaces, activeWorkspaceId }: UserMenuProps)
     startTransition(async () => {
       const result = await switchWorkspace({ workspaceId });
       if (result.ok) dispatch({ type: "workspaceChanged" });
-      else notify(result.error.message);
+      else notify(result.error.message, "error");
     });
   }
 

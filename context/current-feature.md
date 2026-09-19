@@ -1,6 +1,6 @@
 # Current Build
 
-Status: in-progress
+Status: review
 Build: 01 · App shell (common to every screen)
 Spec: context/features/01-app-shell.spec.md
 Image: context/screenshots/01-app-shell.png
@@ -77,7 +77,19 @@ Decided myself (A3/A4):
 - dev `prettier`: formatting (standards §15). jsx-a11y is already bundled with `eslint-config-next`, so only its config changes.
 
 ## Review
-—
+Reviewed 2026-09-19 against the spec, S01/C01–C03 image, foundation and standards; UI checked at 1440, 1280 and 1024. Product rules, session scoping and build boundaries: no issues found.
+- [medium] Focus went to `<body>` after the Ask drawer closed (the edge tab unmounted while open): fixed, tab stays mounted with `aria-expanded`; e2e asserts focus returns.
+- [medium] Action errors were announced as `role="status"`, not `role="alert"` (§8, §10): fixed, `notify(msg, "error")` renders an alert.
+- [medium] No loading state while a run or the example loads into the header (§10); the sr-only text sat inside the closing menu: fixed, `headerLoading` state, header `aria-busy` + "Loading…".
+- [low] Rail expand button's `aria-controls` pointed at the unmounted panel: fixed.
+- [low] Breakpoint off by one (1180px counted as desktop; spec says ≤1180 narrows): fixed (`desk` = 1181px).
+- [low] `format:check` failed on 3 files, and `pnpm format` rewrote CLAUDE.md: fixed; CLAUDE.md/AGENTS.md added to `.prettierignore`.
+- [low] README typecheck description out of date: fixed.
+- [low] Disabled review-bar buttons aren't focusable, so keyboard users can't discover them: open (spec says disabled; revisit in Build 07 with `aria-disabled` + reason).
+- [low] Recent-run times use the server's time zone: open (phase 2, user time zone).
+- [low] Menu.tsx and Notice.tsx export several components (§6 one per file): open (compound parts share a private context; deliberate).
+- [low] `rounded-[5px]` inner radius in Segmented/GradeBadge isn't a token: open (nested radius; add a token if reused).
+- [low] Run manifest is muted/disabled, the image shows an active link: open (recorded decision).
 
 ## Tests
 —
@@ -89,3 +101,4 @@ Decided myself (A3/A4):
 - 2026-09-19 — Task 4: "Load example" is a template (`getExample()`: title + context, no run ID or owner); the run ID arrives when Build 03 starts a run. Runs whose fixtures lack full context keep `context: null` and show a visible `[PLACEHOLDER]`. Recent-run times use the real clock, so "Today/Yesterday" shift from the screenshot's day. Fixture includes a `usr_other` run to prove scoping.
 - 2026-09-19 — Tasks 7–10 in one commit (the files interlock). Screen state is one reducer + context (`components/shell/screenState.tsx`). Dev switcher sits inline in the top bar (dev only), so it can't overlap menus. Opening a batch run switches mode to Batch. Review-bar chip reflects a loaded run's review status; all its actions stay disabled. Run screen and Sign out show "Not connected yet". e2e now reuses the dev server on :3000 (one was already running). Visual check done at 1440 (S01, C01–C03, loaded run) and 1024.
 - 2026-09-19 — Task 11: 9 e2e tests (S01, C01, C02, C03, keyboard, tablet) + smoke; guard tests (no "safe", no overall score, mocks/Prisma and USE_MOCKS only in lib/data, lib/data server-only, no user/workspace ID params). All 11 tasks done. Checks: typecheck ✓, lint ✓, unit 48/48 ✓, e2e 10/10 ✓, `pnpm build` ✓; prod HTML has no dev switcher; events route returns 404 for another user's run, 400 for a bad ID. Next: `/feature review`.
+- 2026-09-19 — review: 3 medium + 4 low fixed, 5 low open (see Review). typecheck ✓ lint ✓ format ✓ unit 50/50 ✓ e2e 10/10 ✓. Status review.

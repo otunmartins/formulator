@@ -43,12 +43,18 @@ export function RunHeader() {
   const { eyebrow, title, context } = headerText(state.header, state.mode);
 
   return (
-    <div className="mb-5">
+    <div className="mb-5" aria-busy={state.headerLoading}>
       <p className="font-mono text-[11px] font-medium tracking-widest text-muted uppercase">
         {eyebrow}
       </p>
       <h1 className="mt-1.5 text-[22px] leading-tight font-semibold">{title}</h1>
-      {context && <p className="mt-1 text-[13px] text-muted">{context}</p>}
+      {state.headerLoading ? (
+        <p role="status" className="mt-1 text-[13px] text-muted">
+          Loading…
+        </p>
+      ) : (
+        context && <p className="mt-1 text-[13px] text-muted">{context}</p>
+      )}
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Drawer } from "./Drawer";
 import { GradeBadge } from "./GradeBadge";
 import { Menu, MenuGroup, MenuItem } from "./Menu";
 import { Modal } from "./Modal";
+import { NoticeProvider, useNotice } from "./Notice";
 import { Segmented } from "./Segmented";
 import { Tabs } from "./Tabs";
 import { VerdictChip } from "./VerdictChip";
@@ -201,5 +202,33 @@ describe("Tabs", () => {
       "true",
     );
     expect(screen.getByRole("tabpanel")).toHaveTextContent("Panel uniprot");
+  });
+});
+
+describe("Notice", () => {
+  function Trigger() {
+    const notify = useNotice();
+    return (
+      <>
+        <Button onClick={() => notify("Not connected yet")}>Stub</Button>
+        <Button onClick={() => notify("This run isn't in your current workspace.", "error")}>
+          Fail
+        </Button>
+      </>
+    );
+  }
+
+  it("announces stubs politely and errors as alerts", async () => {
+    const user = userEvent.setup();
+    render(
+      <NoticeProvider>
+        <Trigger />
+      </NoticeProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "Stub" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Not connected yet");
+    await user.click(screen.getByRole("button", { name: "Fail" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("isn't in your current workspace");
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
   });
 });

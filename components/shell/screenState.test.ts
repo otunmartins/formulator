@@ -20,6 +20,12 @@ describe("screenReducer", () => {
     expect(next.mode).toBe("batch");
   });
 
+  it("tracks header loading until the run arrives", () => {
+    const loading = screenReducer(initialScreenState, { type: "headerLoading", loading: true });
+    expect(loading.headerLoading).toBe(true);
+    expect(screenReducer(loading, { type: "loadRun", run }).headerLoading).toBe(false);
+  });
+
   it("clears a loaded run when the workspace changes", () => {
     const loaded = screenReducer(initialScreenState, { type: "loadRun", run });
     expect(screenReducer(loaded, { type: "workspaceChanged" }).header).toEqual({ kind: "empty" });

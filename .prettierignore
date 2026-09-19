@@ -5,3 +5,5 @@ context
 .claude
 playwright-report
 test-results
+CLAUDE.md
+AGENTS.md

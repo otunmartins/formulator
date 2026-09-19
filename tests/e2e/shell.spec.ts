@@ -121,6 +121,7 @@ test("keyboard: menus, drawer and mode toggle work without a mouse", async ({ pa
   await expect(drawer).toContainText("Not connected yet");
   await page.keyboard.press("Escape");
   await expect(drawer).toBeHidden();
+  await expect(ask).toBeFocused();
 
   await button(page, "Batch").focus();
   await page.keyboard.press("Space");

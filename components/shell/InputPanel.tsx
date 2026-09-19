@@ -28,7 +28,6 @@ export function InputPanel() {
           icon="panel-open"
           label="Expand input panel"
           aria-expanded={false}
-          aria-controls={PANEL_ID}
           onClick={() => dispatch({ type: "setPanelCollapsed", collapsed: false })}
         />
         <span

@@ -15,10 +15,15 @@ export function EmptyState() {
   const [pending, startTransition] = useTransition();
 
   function onLoadExample() {
+    dispatch({ type: "headerLoading", loading: true });
     startTransition(async () => {
       const result = await loadExample();
-      if (result.ok) dispatch({ type: "loadExample", example: result.data });
-      else notify(result.error.message);
+      if (result.ok) {
+        dispatch({ type: "loadExample", example: result.data });
+      } else {
+        dispatch({ type: "headerLoading", loading: false });
+        notify(result.error.message, "error");
+      }
     });
   }
 

@@ -19,13 +19,18 @@ export interface RecentRunsMenuProps {
 export function RecentRunsMenu({ runs }: RecentRunsMenuProps) {
   const { state, dispatch } = useScreen();
   const notify = useNotice();
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function open(runId: string) {
+    dispatch({ type: "headerLoading", loading: true });
     startTransition(async () => {
       const result = await openRun({ runId });
-      if (result.ok) dispatch({ type: "loadRun", run: result.data });
-      else notify(result.error.message);
+      if (result.ok) {
+        dispatch({ type: "loadRun", run: result.data });
+      } else {
+        dispatch({ type: "headerLoading", loading: false });
+        notify(result.error.message, "error");
+      }
     });
   }
 
@@ -68,7 +73,6 @@ export function RecentRunsMenu({ runs }: RecentRunsMenuProps) {
           </MenuItem>
         ))}
       </MenuGroup>
-      {pending && <span className="sr-only">Loading run</span>}
     </Menu>
   );
 }

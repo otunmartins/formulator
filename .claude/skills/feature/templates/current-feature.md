@@ -1,8 +1,10 @@
-# Current Feature
+# Current Build
 
 Status: idle
-Feature: —
+Build: —
 Spec: —
+Image: —
+Depends on: —
 Branch: —
 Base: —
 Loaded: —
@@ -10,7 +12,7 @@ Loaded: —
 ## Goal
 —
 
-## Acceptance criteria
+## Done when
 —
 
 ## Open questions

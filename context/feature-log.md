@@ -1,11 +1,8 @@
-# Feature Log
+# Build Log
 
-History of completed or abandoned features. `/feature end` adds to it. Newest entries go at the bottom.
+History of ended builds. `/feature end` adds each one, with its build report (AI_INTERACTION A7). Newest entries go at the bottom. `/feature load` checks this file to confirm a build's dependencies are merged.
 
-<!-- Entry format:
-## YYYY-MM-DD — <Feature title> (<outcome: merged | pr-opened | committed | abandoned>)
-- Spec: context/features/<slug>.md
-- Branch: feature/<slug>
-- Summary: one line
-- Follow-ups: …
+<!-- Entry heading format:
+## YYYY-MM-DD — Build NN · <Name> (merged | pr-opened | committed | abandoned)
+followed by the A7 report.
 -->

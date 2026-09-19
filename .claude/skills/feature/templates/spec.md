@@ -1,27 +1,46 @@
-# <Feature title>
+# Build NN · <Name>
 
-## Summary
-One or two sentences: what this feature is and why it matters.
+> Read `CLAUDE.md`, `context/PROJECT_OVERVIEW.md`, `context/AI_INTERACTION.md`, `context/CODING_STANDARDS.md` and `context/00-foundation.md` first. This build is **front end only, against mocks**. The reference image is `context/screenshots/NN-name.png`.
 
-## Requirements
-- Must-have behaviour, one per line
+**Goal.** What this build adds, and what is true when it's done.
 
-## Nice to have
-- Optional extras. Build them only if time allows.
+**Depends on:** Build NN, …  
+**Next build:** Build NN · <Name>.
 
-## Out of scope
-- Things this feature explicitly does not do
+## Screens in this build
+| Screen | What's different |
+|---|---|
+| SNN · <Name> | … |
 
-## UI / UX
-Describe screens, states (empty, loading, error) and interactions.
-Reference images: ![login screen](../screenshots/login.png)
+## Tasks
+1. …
 
-## Data / API
-Models, routes, server actions, external services, env vars.
+## Mock fixtures
+- …
 
-## Acceptance criteria
-- [ ] Concrete, checkable statement of done
-- [ ] ...
+## Screen details
 
-## Notes
-Links, constraints, prior art.
+### SNN · <Name>
+*Reference:* `NN-name.png`, section SNN
+
+**How the user gets here**
+- …
+
+**What's on screen**
+- …
+
+**Actions → next**
+
+| Action | Goes to |
+|---|---|
+| … | … |
+
+**Notes**
+- …
+
+## Done when
+- [ ] SNN matches its screen.
+- [ ] Everything in "Acceptance that applies to every build" (foundation) holds.
+
+## Out of scope for this build
+- Anything listed in later builds; leave clean extension points instead.

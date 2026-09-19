@@ -66,7 +66,7 @@ Decided myself (A3/A4):
 - [x] 8. feat(shell): wire menus: Recent runs from `listRecentRuns()`, open a run / Load example into the header, workspace switch reloads runs, Sign out stub.
 - [x] 9. feat(dev): dev-only state switcher (S01, C01, C02, C03), not rendered when `NODE_ENV=production`.
 - [x] 10. feat(shell): tablet (≤1180px) panel narrows; collapse/expand rail (C03) with `aria-expanded`.
-- [ ] 11. test: e2e happy path (S01, C01, C02 switch, C03, keyboard) + guard tests (no "safe" verdict, components don't import `lib/mocks`, `lib/data` exports take no userId/workspaceId).
+- [x] 11. test: e2e happy path (S01, C01, C02 switch, C03, keyboard) + guard tests (no "safe" verdict, components don't import `lib/mocks`, `lib/data` exports take no userId/workspaceId).
 
 **New dependencies (CODING_STANDARDS §12)**
 - `zod`: validates action/route inputs and fixture shapes (standards require it).
@@ -88,3 +88,4 @@ Decided myself (A3/A4):
 - 2026-09-19 — go-ahead; Status in-progress. Tasks 1–2: pnpm 12 via `corepack pnpm` (global shim needs admin on this machine), `packageManager` pinned, `unrs-resolver` build allowed in `pnpm-workspace.yaml`; jsx-a11y recommended rules taken from the plugin instance eslint-config-next loads (pnpm doesn't hoist it).
 - 2026-09-19 — Task 4: "Load example" is a template (`getExample()`: title + context, no run ID or owner); the run ID arrives when Build 03 starts a run. Runs whose fixtures lack full context keep `context: null` and show a visible `[PLACEHOLDER]`. Recent-run times use the real clock, so "Today/Yesterday" shift from the screenshot's day. Fixture includes a `usr_other` run to prove scoping.
 - 2026-09-19 — Tasks 7–10 in one commit (the files interlock). Screen state is one reducer + context (`components/shell/screenState.tsx`). Dev switcher sits inline in the top bar (dev only), so it can't overlap menus. Opening a batch run switches mode to Batch. Review-bar chip reflects a loaded run's review status; all its actions stay disabled. Run screen and Sign out show "Not connected yet". e2e now reuses the dev server on :3000 (one was already running). Visual check done at 1440 (S01, C01–C03, loaded run) and 1024.
+- 2026-09-19 — Task 11: 9 e2e tests (S01, C01, C02, C03, keyboard, tablet) + smoke; guard tests (no "safe", no overall score, mocks/Prisma and USE_MOCKS only in lib/data, lib/data server-only, no user/workspace ID params). All 11 tasks done. Checks: typecheck ✓, lint ✓, unit 48/48 ✓, e2e 10/10 ✓, `pnpm build` ✓; prod HTML has no dev switcher; events route returns 404 for another user's run, 400 for a bad ID. Next: `/feature review`.

@@ -4,7 +4,8 @@ Single-page decision-support app for formulation scientists. Next.js (App Router
 
 ## Setup
 
-Uses **pnpm** through corepack (the version is pinned in `package.json`). If `pnpm` isn't on your PATH, run `corepack enable pnpm`, or prefix each command with `corepack`.
+Uses **pnpm** through corepack (the version is pinned in `package.json`). If `pnpm` isn't on your PATH, run `corepack enable pnpm`. On Windows without admin rights, install the shims into a folder you own that is on your PATH, e.g. `corepack enable pnpm --install-directory "%APPDATA%
+pm"`.
 
 ```bash
 cp .env.example .env.local        # USE_MOCKS=true

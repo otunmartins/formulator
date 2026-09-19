@@ -1,6 +1,6 @@
 # Current Build
 
-Status: in-progress
+Status: review
 Build: 04 · Dossier: verdict matrix
 Spec: context/features/04-verdict-matrix.spec.md
 Image: context/screenshots/04-verdict-matrix.png
@@ -58,7 +58,15 @@ Asked (2026-09-19):
 **New dependencies:** none.
 
 ## Review
-—
+2026-09-19 · diff `main...HEAD` against the product rules, spec, foundation, S07/S15 (and S06 partial) at 1440/1280/1024 and the coding standards.
+- **Medium** · The grade legend on the last rows was clipped by the matrix card's `overflow-hidden`, so the A–E legend was unreadable there on hover or focus. **Fixed**: no overflow clipping; bottom padding keeps an expanded last row inside the rounded corners.
+- **Medium** · At 1280 px the "Supported without precedent" chip ran into the grade badge (percentage column too narrow). **Fixed**: verdict column has a fixed width that fits the longest label.
+- **Low** · Source-panel ids were built from endpoint ids, so two matrices on one screen (Build 09 batch) would share ids. **Fixed**: `useId`.
+- **Low** · A run resolved from "Tween 80 HP-K" to PS80 keeps its typed title ("Tween 80 HP-K × 1N8Z Fab") while showing PS80 endpoints. **Open** (Build 03 title behaviour; the identity note says which record was used).
+- **Low** · Opening the batch fixture run shows the single-mode matrix with the placeholder row. **Open** (Build 09 owns batch).
+- **Low** · The partial header says "Precedent endpoints only" whichever step failed; only the hazard step can fail in the mocks. **Open** (revisit if other steps get failure scripts).
+- **Low** · `formatConc` would print very small concentrations in exponent form (e.g. 1e-7). **Open** (the schema allows it; no fixture comes close).
+No product-rule issues: no "safe", counts are per verdict with no total, every verdict and warning is icon + text, one screen, the dossier is owner + workspace scoped and the novel rule is applied in `lib/data/`.
 
 ## Tests
 —
@@ -69,3 +77,4 @@ Asked (2026-09-19):
 - 2026-09-19 — Tasks 1–2: fixtures typed from the image (OOD text stored without its "Out of domain:" prefix). The endpoint set is stored on the run (`endpointSet`, default null for older cookies) and decided at start (resolved name or CAS) and on identity resolve (candidate CAS or CAS override; SMILES overrides get none). `getDossier` applies the novel rule itself, so no caller can show a positive verdict for a novel excipient. The score guard caught a comment saying "no overall score"; the comment was reworded, the guard kept.
 - 2026-09-19 — Tasks 3–7: `DossierSection` owns the matrix with loading (skeleton), error (alert + "Try again") and loaded states; the novel banner sits above the matrix. Rows use a real `<table>` (row headers per endpoint, a hidden details row per endpoint for sources). Added a `size="sm"` Chip/VerdictChip variant for the header counts (they wrapped at 1440). Tests found that the count chips read "3Precedented" to assistive tech; a real space fixes it. `useDossier` derives its loading state (lint: no setState in effects). Dev S15 sends ALX-117 at 1.0 mg/mL with the polymer fields read from S15 (fixed after task 7). Build 03 e2e now waits for the matrix header instead of the removed hand-off text. Checks: typecheck ✓ · lint ✓ · unit 162 ✓ · e2e 26 ✓ · visual S07/S15/S06 at 1440 and S07 at 1024 ✓.
 - 2026-09-19 — Gaps fixed on request: dev S15 now sends ALX-117's polymer fields from the S15 panel (`ALX117_POLYMER`; the cut-off repeat-unit tail and PLGA DP stay `[PLACEHOLDER]`, not completed from chemistry). New `formatConc` shows whole-number concentrations with one decimal (1 → "1.0") in the header and the panel field, never rounding. Checks: typecheck ✓ · lint ✓ · unit 164 ✓ · dossier + inputs e2e 12 ✓ · visual S15 ✓.
+- 2026-09-19 — review: 2 medium + 1 low fixed, 4 low open (see Review). Checks after fixes: typecheck ✓ · lint ✓ · unit 164 ✓ · dossier e2e 6 ✓.

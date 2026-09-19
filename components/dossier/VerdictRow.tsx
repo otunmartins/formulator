@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { GradeBadge } from "@/components/ui/GradeBadge";
 import { Icon } from "@/components/ui/Icon";
 import { VerdictChip } from "@/components/ui/VerdictChip";
@@ -16,7 +17,8 @@ export interface VerdictRowProps {
 
 /** One endpoint: verdict (icon + text), evidence grade, basis, and its sources when expanded. */
 export function VerdictRow({ endpoint, expanded, onToggle }: VerdictRowProps) {
-  const detailsId = `endpoint-${endpoint.id}-sources`;
+  // Unique per render, so two matrices on one screen (Build 09) never share an id.
+  const detailsId = `${useId()}-sources`;
   return (
     <tbody className={cn("border-t border-border", expanded && "bg-surface-subtle")}>
       <tr className="align-top">

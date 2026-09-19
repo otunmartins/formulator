@@ -1,22 +1,40 @@
 "use client";
 
+import { useRef, useState, useTransition } from "react";
+import { startRun } from "@/app/actions/runs";
+import { ContextSection } from "@/components/inputs/ContextSection";
+import { ExcipientSection } from "@/components/inputs/ExcipientSection";
+import { ProteinSection } from "@/components/inputs/ProteinSection";
+import { useRunInput } from "@/components/inputs/RunInputProvider";
 import { Button } from "@/components/ui/Button";
+import { FieldError } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
 import { NOT_CONNECTED, useNotice } from "@/components/ui/Notice";
+import { FIELD_ORDER, requestFromDraft, type FieldErrors } from "@/lib/types/runInput";
 import { useScreen } from "./screenState";
 
 const PANEL_ID = "input-panel";
 
+export interface InputPanelProps {
+  /** Locks every input and the Run button, e.g. for a signed version. TODO(build-07). */
+  disabled?: boolean;
+}
+
 /**
- * Left input panel (sticky, collapsible). Build 01 has the container, section headings
- * and the Run button only. TODO(build-02): excipient, protein and context fields.
+ * Left input panel (sticky, collapsible). Single mode: Excipient, Protein and Context, and
+ * Run, which validates and calls `startRun`. The draft lives in RunInputProvider, so it
+ * survives collapsing the panel.
  * TODO(build-09): CSV upload and preview in Batch mode.
  * TODO(build-03): at tablet widths, collapse after a run completes.
  */
-export function InputPanel() {
+export function InputPanel({ disabled = false }: InputPanelProps) {
   const { state, dispatch } = useScreen();
+  const { draft, errors, setErrors } = useRunInput();
   const notify = useNotice();
+  const formRef = useRef<HTMLFieldSetElement>(null);
+  const [pending, startTransition] = useTransition();
+  const [attempted, setAttempted] = useState(false);
 
   if (state.panelCollapsed) {
     return (
@@ -40,7 +58,41 @@ export function InputPanel() {
     );
   }
 
-  const sections = state.mode === "single" ? ["Excipient", "Protein", "Context"] : ["Batch input"];
+  function focusFirstError(found: FieldErrors) {
+    const first = FIELD_ORDER.find((key) => found[key]);
+    if (!first) return;
+    // After the errors render, so the field's description includes its error.
+    requestAnimationFrame(() => {
+      formRef.current?.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus();
+    });
+  }
+
+  function onRun() {
+    if (state.mode === "batch") {
+      notify(NOT_CONNECTED); // TODO(build-09): batch runs.
+      return;
+    }
+    setAttempted(true);
+    const result = requestFromDraft(draft);
+    if (!result.ok) {
+      setErrors(result.errors);
+      focusFirstError(result.errors);
+      return;
+    }
+    setErrors({});
+    dispatch({ type: "headerLoading", loading: true });
+    startTransition(async () => {
+      const response = await startRun(result.request);
+      if (response.ok) {
+        dispatch({ type: "loadRun", run: response.data });
+      } else {
+        dispatch({ type: "headerLoading", loading: false });
+        notify(response.error.message, "error");
+      }
+    });
+  }
+
+  const errorCount = Object.keys(errors).length;
 
   return (
     <aside
@@ -60,22 +112,39 @@ export function InputPanel() {
           onClick={() => dispatch({ type: "setPanelCollapsed", collapsed: true })}
         />
       </div>
-      <div className="flex-1 overflow-y-auto px-6 pb-4">
-        {sections.map((title) => (
-          <section key={title} className="border-b border-border py-5 last:border-b-0">
-            <h3 className="text-[13px] font-semibold">{title}</h3>
-            {state.mode === "batch" && (
-              <p className="mt-2 text-[13px] text-muted">{NOT_CONNECTED}.</p>
-            )}
+      <fieldset
+        ref={formRef}
+        disabled={disabled || pending}
+        aria-label="Screen inputs"
+        className="min-h-0 flex-1 overflow-y-auto px-6 pb-4"
+      >
+        {state.mode === "single" ? (
+          <div className="space-y-6 py-3">
+            <ExcipientSection />
+            <ProteinSection />
+            <ContextSection />
+          </div>
+        ) : (
+          <section className="py-5">
+            <h3 className="text-[13px] font-semibold">Batch input</h3>
+            <p className="mt-2 text-[13px] text-muted">{NOT_CONNECTED}.</p>
           </section>
-        ))}
-      </div>
+        )}
+      </fieldset>
       <div className="border-t border-border px-6 pt-4 pb-5">
-        {/* TODO(build-03): start the run through the startRun action. */}
-        <Button variant="primary" size="lg" onClick={() => notify(NOT_CONNECTED)}>
+        <Button variant="primary" size="lg" onClick={onRun} disabled={disabled || pending}>
           <Icon name="play" className="size-3" />
-          {state.mode === "single" ? "Run screen" : "Run batch"}
+          {pending ? "Starting…" : state.mode === "single" ? "Run screen" : "Run batch"}
         </Button>
+        <div role="alert">
+          {attempted && errorCount > 0 && (
+            <FieldError>
+              {errorCount === 1
+                ? "Check the highlighted field."
+                : `Check the ${errorCount} highlighted fields.`}
+            </FieldError>
+          )}
+        </div>
         <p className="mt-2 text-center text-[11px] text-muted">
           Uses the database snapshots listed in the run manifest.
         </p>

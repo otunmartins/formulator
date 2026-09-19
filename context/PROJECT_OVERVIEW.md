@@ -3,7 +3,7 @@
 *Working title. A focused spin-off of the Biologix excipient platform (Algonix AI).*
 
 ## 1. What it is
-Excipient Screen is a single-page web app for formulation scientists. The user enters an **excipient** (name, CAS, SMILES or a drawn structure; polymers supported) and a **protein** (PDB ID, UniProt ID, sequence or uploaded structure), plus the product context (route, dose, frequency, concentration, storage temperature). The app returns:
+Excipient Screen is a single-page web app for formulation scientists. The user enters an **excipient** (name, CAS or SMILES; polymers supported) and a **protein** (PDB ID, UniProt ID, sequence or uploaded structure), plus the product context (route, dose, frequency, concentration, storage temperature). The app returns:
 
 1. **A cited safety dossier.** For each endpoint it says what is precedented, what is a data gap, and what could go wrong, with a verdict, an evidence grade and sources.
 2. **A liability map.** It shows where this specific protein is vulnerable (oxidation, deamidation and so on), with severity at 4 °C and at room temperature.
@@ -81,7 +81,7 @@ Excipient choice for a biologic depends on scattered evidence: regulatory databa
 | Build | Scope |
 |---|---|
 | 01 | App shell (common to every screen): setup, tokens, shared components, data seam and mocks, top bar and menus, empty state |
-| 02 | Inputs panel: excipient, structure editor, polymer fields, protein tabs, context |
+| 02 | Inputs panel: excipient, polymer fields, protein tabs, context (structure editor removed 2026-09-19) |
 | 03 | Run lifecycle: progress, identity-unresolved and error branches |
 | 04 | Dossier: verdict matrix, sources, grades, novel-excipient rule |
 | 05 | Liability map: 3D viewer, sequence tracks, site card, temperature toggle |

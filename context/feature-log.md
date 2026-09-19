@@ -23,3 +23,19 @@ followed by the A7 report.
 **Deviations from spec or screens:** input panel has headings only (fields in Build 02); Run manifest disabled (image shows active); C01–C03 over the empty screen rather than a dossier; Today/Yesterday follows the real date.
 **Checks run:** typecheck ✓ · lint ✓ · tests ✓ (50 passed) · e2e ✓ (10 passed) · build ✓ · visual check ✓
 **Open questions / next build needs:** open low findings: disabled review-bar buttons not focusable (Build 07: `aria-disabled` + reason); server time zone for run times (phase 2); Menu/Notice multi-export files; 5px inner radius not a token. Build 02 fills `InputPanel` sections; Build 03 replaces the Run-screen stub with `startRun`, replays events via `getRunEvents`, and collapses the panel on tablet after a run.
+
+## 2026-09-19 — Build 02 · Inputs panel (merged)
+**Status:** Done
+**Done when:** all 11 ticked and verified by running (S03 matches; S02 removed by decision; monospace for SMILES, sequences and IDs; Run calls `startRun` with the typed input (component test on the exact payload, e2e header fill); foundation acceptance incl. session-scoped lookups, keyboard, reduced motion, "Not connected yet" stubs).
+**What I built:**
+- Shared zod run-input schema (excipient + polymer, 4 protein sources, context) used in the browser and in `startRun`; draft ↔ typed conversion with field errors.
+- Mock `lookupIdentity` (PS80 by name/CAS; ALX-117 `[PLACEHOLDER]` SMILES) and `lookupStructure` (1N8Z chains, antigen excluded by default), session-scoped; `startRun` → `createRun` mock summary; header fills in place.
+- Form primitives: Field, TextInput, Select, Textarea, Switch, FileDrop.
+- Panel: Excipient + identity hint, Polymer fields, Protein tabs (chain chips, grade C note, drop zone), Context; validation with focus on the first invalid field and an announced error count; panel-wide disabled state (Build 07); Load example fills the panel.
+**Files:** docs (02/01 specs, foundation, overview, standards: structure editor removed, protein contract extended) · `lib/types/{runInput,lookups}.ts`, `domain.ts` context schema · `lib/mocks/{identities,structures}.ts` · `lib/data/inputs.ts`, `createRun` in `lib/data/runs.ts` · `app/actions/inputs.ts`, `startRun` + `loadExample` in `app/actions/runs.ts` · `components/ui/{Field,TextInput,Select,Textarea,Switch,FileDrop,controlStyles}` · `components/inputs/*` · `InputPanel`, `Screen`, `EmptyState`, `Tabs` · 5 new test files + `tests/e2e/inputs.spec.ts`.
+**Decisions:** asked: structure editor removed; Run fills the header; separate `lookupIdentity`; ALX-117 SMILES placeholder; protein contract extended; empty panel, Load example fills it. Mine: monomer split ignores comma + digit ("1,4-dioxane"); units in the input's description; `loadExample` returns example + structure + identity; draft and errors in one reducer.
+**Stubs and placeholders:** ALX-117 SMILES `[PLACEHOLDER]`; uploads read metadata only; runs not stored (TODO build-03 / phase 2); Batch Run "Not connected yet".
+**Deviations from spec or screens:** no Draw structure button or S02 modal (decision); the reference image still shows both.
+**Checks run:** typecheck ✓ · lint ✓ · format ✓ · tests ✓ (91 passed) · e2e ✓ (16 passed) · build ✓ · visual check ✓
+**Open questions / next build needs:** open low findings: required fields not marked; Enter doesn't run; monomers without a space after the comma stay one item; frequency/dose-unit defaults not in the spec; started runs not in Recent runs. Build 03: polling for the run `startRun` returns, `resolveIdentity` override, collapse the panel on tablet after a run.
+Also on main during this build: pnpm pinned to 10.34.5 so Vercel's pnpm 9/10 can install (`a0fdae7`).

@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
+import { RunInputProvider } from "@/components/inputs/RunInputProvider";
 import { Drawer } from "@/components/ui/Drawer";
 import { NOT_CONNECTED, NoticeProvider } from "@/components/ui/Notice";
 import { AskTab } from "./AskTab";
@@ -25,30 +26,33 @@ export function Screen({ data }: ScreenProps) {
   return (
     <ScreenContext.Provider value={{ state, dispatch }}>
       <NoticeProvider>
-        <div className="flex min-h-screen flex-col pb-footer">
-          <TopBar data={data} />
-          <div className="flex flex-1">
-            <InputPanel />
-            <main id="main" className="flex min-w-0 flex-1 flex-col">
-              <div className="px-6 pt-6 pb-8 pr-14 desk:px-8 desk:pr-16">
-                <RunHeader />
-                <ProgressStrip />
-                <EmptyState />
-              </div>
-              <ReviewBar />
-            </main>
+        <RunInputProvider>
+          <div className="flex min-h-screen flex-col pb-footer">
+            <TopBar data={data} />
+            <div className="flex flex-1">
+              {/* TODO(build-07): disabled while the loaded version is signed. */}
+              <InputPanel disabled={false} />
+              <main id="main" className="flex min-w-0 flex-1 flex-col">
+                <div className="px-6 pt-6 pb-8 pr-14 desk:px-8 desk:pr-16">
+                  <RunHeader />
+                  <ProgressStrip />
+                  <EmptyState />
+                </div>
+                <ReviewBar />
+              </main>
+            </div>
+            <AskTab />
+            <Drawer
+              open={state.drawer === "ask"}
+              onClose={() => dispatch({ type: "closeDrawer" })}
+              title="Ask about this result"
+            >
+              {/* TODO(build-08): dossier-limited Q&A. */}
+              <p className="text-[13px] text-muted">{NOT_CONNECTED}.</p>
+            </Drawer>
+            <Footer />
           </div>
-          <AskTab />
-          <Drawer
-            open={state.drawer === "ask"}
-            onClose={() => dispatch({ type: "closeDrawer" })}
-            title="Ask about this result"
-          >
-            {/* TODO(build-08): dossier-limited Q&A. */}
-            <p className="text-[13px] text-muted">{NOT_CONNECTED}.</p>
-          </Drawer>
-          <Footer />
-        </div>
+        </RunInputProvider>
       </NoticeProvider>
     </ScreenContext.Provider>
   );

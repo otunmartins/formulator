@@ -22,7 +22,7 @@ function headerText(header: LoadedHeader, mode: "single" | "batch"): HeaderText 
       return {
         eyebrow: modeLabel,
         title: header.example.title,
-        context: formatContextLine(header.example.context),
+        context: formatContextLine(header.example.input.context),
       };
     case "run": {
       const { run } = header;

@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { NOT_CONNECTED, useNotice } from "@/components/ui/Notice";
+import { useRunInput } from "@/components/inputs/RunInputProvider";
 import { useScreen } from "./screenState";
 
 /** The empty results card. TODO(build-04): replaced by the dossier once a run has results. */
 export function EmptyState() {
   const { state, dispatch } = useScreen();
   const notify = useNotice();
+  const runInput = useRunInput();
   const [pending, startTransition] = useTransition();
 
   function onLoadExample() {
@@ -19,7 +21,9 @@ export function EmptyState() {
     startTransition(async () => {
       const result = await loadExample();
       if (result.ok) {
-        dispatch({ type: "loadExample", example: result.data });
+        const { example, structure, identity } = result.data;
+        runInput.load(example.input, structure, identity);
+        dispatch({ type: "loadExample", example });
       } else {
         dispatch({ type: "headerLoading", loading: false });
         notify(result.error.message, "error");

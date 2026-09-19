@@ -30,12 +30,28 @@ export type Steps = Record<StepKey, Step>;
 export const routeSchema = z.enum(["SC", "IV", "IM"]);
 export type Route = z.infer<typeof routeSchema>;
 
+export const doseUnitSchema = z.enum(["mg", "mg/kg"]);
+export type DoseUnit = z.infer<typeof doseUnitSchema>;
+
+export const frequencySchema = z.enum(["once", "qd", "qw", "q2w", "q3w", "q4w"]);
+export type Frequency = z.infer<typeof frequencySchema>;
+
+export const storageSchema = z.union([z.literal(4), z.literal(25), z.literal(40)]);
+export type StorageTemp = z.infer<typeof storageSchema>;
+
+const positive = (label: string, max: number) =>
+  z
+    .number({ error: `Enter ${label}.` })
+    .refine(Number.isFinite, `Enter ${label}.`)
+    .refine((n) => n > 0, "Must be greater than 0.")
+    .refine((n) => n <= max, `Must be at most ${max}.`);
+
 export const runContextSchema = z.object({
   route: routeSchema,
-  dose: z.object({ value: z.number(), unit: z.string() }),
-  frequency: z.string(),
-  conc_mg_mL: z.number(),
-  storage_C: z.number(),
+  dose: z.object({ value: positive("a dose", 100_000), unit: doseUnitSchema }),
+  frequency: frequencySchema,
+  conc_mg_mL: positive("a concentration", 1_000),
+  storage_C: storageSchema,
 });
 export type RunContext = z.infer<typeof runContextSchema>;
 
@@ -69,14 +85,6 @@ export const runRecordSchema = runSummarySchema.extend({
   workspaceId: z.string(),
 });
 export type RunRecord = z.infer<typeof runRecordSchema>;
-
-/** A starting point for a new screen (the "Load example" button). Not a run; has no owner. */
-export const exampleSchema = z.object({
-  title: z.string(),
-  route: routeSchema,
-  context: runContextSchema,
-});
-export type Example = z.infer<typeof exampleSchema>;
 
 export const workspaceSchema = z.object({
   id: z.string(),

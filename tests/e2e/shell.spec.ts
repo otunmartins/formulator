@@ -42,7 +42,9 @@ test("S01: Load example fills the run header in place", async ({ page }) => {
 });
 
 test("S01: stubbed actions say Not connected yet", async ({ page }) => {
-  await button(page, "Run screen").click();
+  // Single-mode Run is real since Build 02; Batch runs are still a stub (Build 09).
+  await button(page, "Batch").click();
+  await button(page, "Run batch").click();
   await expect(page.getByRole("status")).toContainText("Not connected yet");
 });
 

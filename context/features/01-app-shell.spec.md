@@ -50,7 +50,7 @@ These screens share their components and differ only as described, so build them
 
 | Action | Goes to |
 |---|---|
-| Draw structure | S02 |
+| ~~Draw structure~~ | Removed 2026-09-19 (no structure editor) |
 | Protein tab or Polymer switch | S03 |
 | Run screen / Load example | S04 |
 | Batch toggle | B01 |

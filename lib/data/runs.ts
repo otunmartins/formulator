@@ -4,12 +4,13 @@ import { EXAMPLE, RUNS } from "@/lib/mocks/runs";
 import {
   runSummarySchema,
   stepKeys,
-  type Example,
   type RunEvents,
   type RunRecord,
   type RunSummary,
   type Steps,
 } from "@/lib/types/domain";
+import type { Example, ProteinInput, RunRequest } from "@/lib/types/runInput";
+import { lookupIdentity, lookupStructure } from "./inputs";
 import { dataSource } from "./source";
 
 function toSummary(record: RunRecord): RunSummary {
@@ -44,6 +45,54 @@ export async function getExample(): Promise<Example> {
   await getSession();
   dataSource();
   return EXAMPLE;
+}
+
+// Mock run numbers for runs started this session; high enough not to clash with fixtures.
+let nextRunNumber = 5000;
+
+function mockRunId(now: Date): string {
+  const pad = (n: number, width = 2) => String(n).padStart(width, "0");
+  const n = nextRunNumber++;
+  return `RUN-${now.getFullYear()}-${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(n, 4)}`;
+}
+
+async function proteinLabel(protein: ProteinInput): Promise<string> {
+  switch (protein.source) {
+    case "pdb":
+      return (await lookupStructure(protein.id))?.label ?? protein.id;
+    case "uniprot":
+      return protein.id;
+    case "sequence":
+      return "sequence input";
+    case "upload":
+      return protein.fileName;
+    default: {
+      const unreachable: never = protein;
+      return unreachable;
+    }
+  }
+}
+
+/**
+ * Starts a single run for the session user in the active workspace and returns its summary.
+ * Phase 1 only builds the summary: nothing is stored or queued.
+ * TODO(build-03): mock event script for this run. TODO(phase-2): insert Run + Job rows.
+ */
+export async function createRun(request: RunRequest): Promise<RunSummary> {
+  await getSession();
+  dataSource();
+  const identity = await lookupIdentity(request.excipient.query);
+  const excipientName = identity.status === "no_match" ? request.excipient.query : identity.name;
+  const now = new Date();
+  return runSummarySchema.parse({
+    runId: mockRunId(now),
+    kind: "single",
+    title: `${excipientName} × ${await proteinLabel(request.protein)}`,
+    route: request.context.route,
+    context: request.context,
+    createdAt: now.toISOString(),
+    review: { status: "draft", version: 1 },
+  });
 }
 
 /**

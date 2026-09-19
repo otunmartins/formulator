@@ -1,8 +1,11 @@
 "use server";
 
 import { z } from "zod";
-import { getExample, getRunSummary } from "@/lib/data/runs";
-import { runIdSchema, type Example, type RunSummary } from "@/lib/types/domain";
+import { lookupIdentity, lookupStructure } from "@/lib/data/inputs";
+import { createRun, getExample, getRunSummary } from "@/lib/data/runs";
+import { runIdSchema, type RunSummary } from "@/lib/types/domain";
+import type { IdentityHint, StructureInfo } from "@/lib/types/lookups";
+import { runRequestSchema, type Example } from "@/lib/types/runInput";
 import { fail, ok, type ActionResult } from "@/lib/types/actions";
 
 const openRunInput = z.object({ runId: runIdSchema });
@@ -19,10 +22,34 @@ export async function openRun(input: unknown): Promise<ActionResult<RunSummary>>
   return ok(run);
 }
 
-/** The "Load example" template. TODO(build-03): start a run from it. */
-export async function loadExample(): Promise<ActionResult<Example>> {
-  return ok(await getExample());
+export interface LoadedExample {
+  example: Example;
+  /** The example protein's structure, so the chain chips can be shown straight away. */
+  structure: StructureInfo | null;
+  identity: IdentityHint;
 }
 
-// TODO(build-03): startRun, resolveIdentity · TODO(build-06): startSimulation, cancelSimulation
+/** The "Load example" template: fills the input panel and the run header. */
+export async function loadExample(): Promise<ActionResult<LoadedExample>> {
+  const example = await getExample();
+  const { protein, excipient } = example.input;
+  const [structure, identity] = await Promise.all([
+    protein.source === "pdb" ? lookupStructure(protein.id) : Promise.resolve(null),
+    lookupIdentity(excipient.query),
+  ]);
+  return ok({ example, structure, identity });
+}
+
+/**
+ * Starts a screen from the input panel. The input is validated again here; the client's
+ * validation is never trusted. TODO(build-03): progress polling for the returned run.
+ */
+export async function startRun(input: unknown): Promise<ActionResult<RunSummary>> {
+  const parsed = runRequestSchema.safeParse(input);
+  if (!parsed.success)
+    return fail("invalid_input", "Some inputs aren't valid. Check the highlighted fields.");
+  return ok(await createRun(parsed.data));
+}
+
+// TODO(build-03): resolveIdentity (override) · TODO(build-06): startSimulation, cancelSimulation
 // TODO(build-07): signOff, newVersion, exportDossier · TODO(build-08): askDossier

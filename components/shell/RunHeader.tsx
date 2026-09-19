@@ -18,12 +18,6 @@ function headerText(header: LoadedHeader, mode: "single" | "batch"): HeaderText 
         title: mode === "single" ? "New screen" : "New batch",
         context: null,
       };
-    case "example":
-      return {
-        eyebrow: modeLabel,
-        title: header.example.title,
-        context: formatContextLine(header.example.input.context),
-      };
     case "run": {
       const { run } = header;
       const context = run.context

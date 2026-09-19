@@ -2,13 +2,12 @@
 
 import { useReducer } from "react";
 import { RunInputProvider } from "@/components/inputs/RunInputProvider";
+import { RunArea } from "@/components/run/RunArea";
 import { Drawer } from "@/components/ui/Drawer";
 import { NOT_CONNECTED, NoticeProvider } from "@/components/ui/Notice";
 import { AskTab } from "./AskTab";
-import { EmptyState } from "./EmptyState";
 import { Footer } from "./Footer";
 import { InputPanel } from "./InputPanel";
-import { ProgressStrip } from "./ProgressStrip";
 import { ReviewBar } from "./ReviewBar";
 import { RunHeader } from "./RunHeader";
 import { initialScreenState, ScreenContext, screenReducer } from "./screenState";
@@ -35,8 +34,7 @@ export function Screen({ data }: ScreenProps) {
               <main id="main" className="flex min-w-0 flex-1 flex-col">
                 <div className="px-6 pt-6 pb-8 pr-14 desk:px-8 desk:pr-16">
                   <RunHeader />
-                  <ProgressStrip />
-                  <EmptyState />
+                  <RunArea />
                 </div>
                 <ReviewBar />
               </main>

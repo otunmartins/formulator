@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Session } from "@/lib/auth/session";
+import { createCookieJar } from "@/tests/helpers/cookieJar";
 
 const session: { current: Session } = {
   current: {
@@ -10,6 +11,8 @@ const session: { current: Session } = {
   },
 };
 
+const jar = createCookieJar();
+vi.mock("next/headers", () => ({ cookies: async () => jar.store }));
 vi.mock("@/lib/auth/session", () => ({ getSession: async () => session.current }));
 
 const { listRecentRuns, getRunSummary, getRunEvents } = await import("./runs");
@@ -77,14 +80,14 @@ describe("getRunSummary", () => {
 });
 
 describe("getRunEvents", () => {
-  it("returns every step pending before Build 03", async () => {
+  it("shows a finished fixture run as complete (Build 03 replays mock scripts)", async () => {
     const events = await getRunEvents("RUN-2026-0918-0412");
-    expect(events?.done).toBe(false);
+    expect(events?.runState).toBe("complete");
     expect(Object.values(events?.steps ?? {}).map((s) => s.status)).toEqual([
-      "pending",
-      "pending",
-      "pending",
-      "pending",
+      "done",
+      "done",
+      "done",
+      "done",
     ]);
   });
 });

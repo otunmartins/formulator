@@ -108,6 +108,38 @@ html {
   outline-offset: 2px;
 }
 
+/* Motion is limited to progress ticks and section reveal (foundation). Both are switched off
+   by the reduced-motion rule below. */
+@keyframes es-tick {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes es-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-tick {
+  animation: es-tick 320ms ease-out both;
+}
+
+@utility animate-reveal {
+  animation: es-reveal 240ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

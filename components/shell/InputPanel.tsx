@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
-import { startRun } from "@/app/actions/runs";
+import { useRef, useState } from "react";
 import { ContextSection } from "@/components/inputs/ContextSection";
 import { ExcipientSection } from "@/components/inputs/ExcipientSection";
 import { ProteinSection } from "@/components/inputs/ProteinSection";
 import { useRunInput } from "@/components/inputs/RunInputProvider";
+import { useStartRun } from "@/components/run/useStartRun";
 import { Button } from "@/components/ui/Button";
 import { FieldError } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
@@ -33,7 +33,7 @@ export function InputPanel({ disabled = false }: InputPanelProps) {
   const { draft, errors, setErrors } = useRunInput();
   const notify = useNotice();
   const formRef = useRef<HTMLFieldSetElement>(null);
-  const [pending, startTransition] = useTransition();
+  const { start, pending } = useStartRun();
   const [attempted, setAttempted] = useState(false);
 
   if (state.panelCollapsed) {
@@ -80,16 +80,7 @@ export function InputPanel({ disabled = false }: InputPanelProps) {
       return;
     }
     setErrors({});
-    dispatch({ type: "headerLoading", loading: true });
-    startTransition(async () => {
-      const response = await startRun(result.request);
-      if (response.ok) {
-        dispatch({ type: "loadRun", run: response.data });
-      } else {
-        dispatch({ type: "headerLoading", loading: false });
-        notify(response.error.message, "error");
-      }
-    });
+    start(result.request);
   }
 
   const errorCount = Object.keys(errors).length;

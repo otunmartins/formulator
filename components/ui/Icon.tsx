@@ -27,6 +27,20 @@ const PATHS = {
     </>
   ),
   "circle-dashed": <circle cx="12" cy="12" r="9" strokeDasharray="3 3" />,
+  "circle-x": (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15 9-6 6" />
+      <path d="m9 9 6 6" />
+    </>
+  ),
+  spinner: <path d="M21 12a9 9 0 1 1-6.2-8.56" />,
+  refresh: (
+    <>
+      <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6l2.5 2.5" />
+      <path d="M20.5 3.5v5h-5" />
+    </>
+  ),
   flask: (
     <>
       <path d="M9.5 3v6.2L4.8 18.6A1.6 1.6 0 0 0 6.2 21h11.6a1.6 1.6 0 0 0 1.4-2.4L14.5 9.2V3" />

@@ -7,14 +7,17 @@ import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { NOT_CONNECTED, useNotice } from "@/components/ui/Notice";
 import { useRunInput } from "@/components/inputs/RunInputProvider";
+import { useStartRun } from "@/components/run/useStartRun";
 import { useScreen } from "./screenState";
 
-/** The empty results card. TODO(build-04): replaced by the dossier once a run has results. */
+/** The empty results card, shown until a run is loaded. */
 export function EmptyState() {
   const { state, dispatch } = useScreen();
   const notify = useNotice();
   const runInput = useRunInput();
-  const [pending, startTransition] = useTransition();
+  const [loading, startTransition] = useTransition();
+  const { start, pending: starting } = useStartRun();
+  const pending = loading || starting;
 
   function onLoadExample() {
     dispatch({ type: "headerLoading", loading: true });
@@ -22,8 +25,9 @@ export function EmptyState() {
       const result = await loadExample();
       if (result.ok) {
         const { example, structure, identity } = result.data;
+        // Fill the panel so the inputs match the run, then start it straight away.
         runInput.load(example.input, structure, identity);
-        dispatch({ type: "loadExample", example });
+        start(example.input);
       } else {
         dispatch({ type: "headerLoading", loading: false });
         notify(result.error.message, "error");

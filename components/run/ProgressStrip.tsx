@@ -4,7 +4,7 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 import { stepKeys, type StepKey, type StepStatus, type Steps } from "@/lib/types/domain";
 import { cn } from "@/lib/utils/cn";
 
-const STEP_TITLES: Record<StepKey, string> = {
+export const STEP_TITLES: Record<StepKey, string> = {
   identity: "Identity",
   precedent: "Precedent",
   hazard: "Hazard",
@@ -76,7 +76,7 @@ export function ProgressStrip({ steps }: ProgressStripProps) {
               <span className="block text-[13px] leading-snug font-semibold">
                 {index + 1}. {STEP_TITLES[key]}
               </span>
-              <span className="block truncate text-xs text-muted">
+              <span className="block truncate text-xs text-muted" title={note}>
                 {note !== style.label && <span className="sr-only">{style.label}: </span>}
                 {note}
               </span>

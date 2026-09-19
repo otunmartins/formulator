@@ -15,9 +15,7 @@ export function SkeletonMatrix({ step }: SkeletonMatrixProps) {
         <h2 id="skeleton-matrix-title" className="text-[15px] font-semibold">
           Verdict matrix
         </h2>
-        <p className="text-[13px] text-muted">
-          Filling in as steps complete · step {step} of 4
-        </p>
+        <p className="text-[13px] text-muted">Filling in as steps complete · step {step} of 4</p>
       </div>
       <div aria-hidden="true" className="space-y-5 px-6 py-6">
         {ROWS.map((basisWidth, i) => (

@@ -65,13 +65,17 @@ export function IdentityResolver({ runId, query, candidates }: IdentityResolverP
           <Icon name="triangle-alert" className="size-4 self-center text-gap-text" />
           Identity unresolved
         </h2>
-        <p className="text-[13px] text-muted">The screen is paused until the excipient is identified.</p>
+        <p className="text-[13px] text-muted">
+          The screen is paused until the excipient is identified.
+        </p>
       </div>
       <form onSubmit={onSubmit} noValidate className="space-y-5 px-6 py-5">
         <p className="text-[13px]">
           <span className="rounded bg-bg px-1.5 py-0.5 font-mono text-xs">{query}</span> did not
           match PubChem, ChEBI or the excipient registry.{" "}
-          {candidates.length > 0 ? "Choose a candidate or enter an override." : "Enter an override."}
+          {candidates.length > 0
+            ? "Choose a candidate or enter an override."
+            : "Enter an override."}
         </p>
 
         {candidates.length > 0 && (

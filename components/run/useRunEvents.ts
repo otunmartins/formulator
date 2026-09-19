@@ -7,6 +7,9 @@ import { useScreen } from "@/components/shell/screenState";
 
 export const POLL_MS = 1500;
 
+/** Tablet widths, where the input panel collapses once a run completes (Build 01 note). */
+const TABLET_QUERY = "(max-width: 1180px)";
+
 /**
  * Polls the events route for the loaded run every 1.5 s (foundation: 1–2 s, no streams).
  * Stops when the run settles (complete, paused for identity, or failed), when another run is
@@ -35,6 +38,9 @@ export function useRunEvents() {
           const events = (await response.json()) as RunEvents;
           if (cancelled) return;
           dispatch({ type: "runEvents", events });
+          if (events.runState === "complete" && window.matchMedia(TABLET_QUERY).matches) {
+            dispatch({ type: "setPanelCollapsed", collapsed: true });
+          }
           if (events.settled) return;
         }
       } catch {

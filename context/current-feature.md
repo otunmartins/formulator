@@ -1,6 +1,6 @@
 # Current Build
 
-Status: review
+Status: ready
 Build: 02 · Inputs panel
 Spec: context/features/02-inputs.spec.md
 Image: context/screenshots/02-inputs.png
@@ -14,19 +14,19 @@ Fill the Single-mode input panel: excipient field (name, CAS or SMILES) with a r
 
 ## Done when
 Spec (S02 and the modal item removed by decision, 2026-09-19):
-- [ ] S03 matches its screen (without the Draw structure button).
-- [ ] Monospace is used for SMILES, sequences and IDs.
-- [ ] Pressing Run calls the `startRun` server action with the typed input.
+- [x] S03 matches its screen (without the Draw structure button). (visual at 1440/1280/1024; e2e checks the button is gone)
+- [x] Monospace is used for SMILES, sequences and IDs. (component test: excipient, PDB ID, repeat unit, FASTA)
+- [x] Pressing Run calls the `startRun` server action with the typed input. (component test asserts the exact payload; e2e: header fills with the returned run ID)
 
 Foundation (every build):
-- [ ] The build's screens match their reference images in layout and copy.
-- [ ] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
-- [ ] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
-- [ ] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
-- [ ] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
-- [ ] The footer disclaimer is visible; no project layer exists.
-- [ ] Stubbed actions show "Not connected yet" rather than failing silently.
-- [ ] Nothing from a later build is started early.
+- [x] The build's screens match their reference images in layout and copy. (S03; S02 removed by decision)
+- [x] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`. (guard tests)
+- [x] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client. (new `lookupIdentity` / `lookupStructure` / `createRun` go through the session; guard test on parameters)
+- [x] Never "safe" as a verdict, no overall score, and status is never shown by colour alone. (guard tests; errors are icon + text; excluded chips say "excluded")
+- [x] Keyboard-navigable with visible focus; honours prefers-reduced-motion. (e2e keyboard test; Tab → chip → Space toggles with visible ring; switch transition 0.15 s → 0 under `reduce`)
+- [x] The footer disclaimer is visible; no project layer exists.
+- [x] Stubbed actions show "Not connected yet" rather than failing silently. (Batch Run e2e)
+- [x] Nothing from a later build is started early.
 
 ## Open questions
 None blocking. Doc-only: the image cites `docs/builds/...` paths and still shows the Draw structure button and S02.
@@ -73,7 +73,10 @@ Reviewed 2026-09-19 against the spec (S03; S02 removed by decision), the image, 
 - [low] Runs started here aren't stored, so they don't appear in Recent runs: open (Phase 1, no persistence).
 
 ## Tests
-—
+typecheck ✓ · lint ✓ · format ✓ · tests ✓ (91 unit/component/guard passed) · e2e ✓ (16 passed) · build ✓ · visual check ✓
+- Visual: S03 (polymer on, Sequence tab) against the reference at 1440; panel at 1280 and 1024; error state; header after Run.
+- Keyboard: Tab into chain chips, Space toggles (visible focus ring); tabs with arrow keys; Polymer switch with Space; storage buttons with Enter.
+- prefers-reduced-motion: Polymer switch transition 0.15 s → 0.
 
 ## Log
 - 2026-09-19 — Loaded Build 02 · Inputs panel. Dependency 01 merged. Spec and image read; 6 open questions.
@@ -82,3 +85,4 @@ Reviewed 2026-09-19 against the spec (S03; S02 removed by decision), the image, 
 - 2026-09-19 — Interlude on main: pinned pnpm 10.34.5 for Vercel compatibility (`a0fdae7`), merged into this branch.
 - 2026-09-19 — Task 9: 11 component tests (`components/inputs/inputPanel.test.tsx`: defaults, mono, identity hint, polymer switch, errors + focus, typed startRun, chains, active tab only, server rejection, Load example, disabled) and 6 e2e (`tests/e2e/inputs.spec.ts`); Build 01's "Run screen stub" e2e now checks the Batch stub. Visual check at 1440/1024 found the dose unit select eating the input and tabs wrapping: fixed (fixed-width unit wrapper, select padding, nowrap tabs). All 9 tasks done. Checks: typecheck ✓ lint ✓ format ✓ unit 88/88 ✓ e2e 16/16 ✓. Next: `/feature review`.
 - 2026-09-19 — review: 3 medium + 1 low fixed (plus 1 low fixed in task 9), 5 low open. typecheck ✓ lint ✓ format ✓ unit 91/91 ✓ e2e 16/16 ✓. Status review.
+- 2026-09-19 — test: all checks pass (unit 91, e2e 16, build ✓); visual, keyboard and reduced motion verified; all Done-when ticked. Status ready.

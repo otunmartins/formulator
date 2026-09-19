@@ -1,1 +1,120 @@
 @import "tailwindcss";
+
+/* Design tokens (context/00-foundation.md). The only place colours are defined. */
+:root {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-subtle: #f9fafb;
+  --border: #dde1e6;
+  --border-strong: #c4cad2;
+  --text: #16191d;
+  --muted: #535b66;
+  --accent: #2b4c9b;
+  --accent-hover: #233f82;
+  --accent-soft: #e9eef8;
+  --on-accent: #ffffff;
+  --footer-bg: #16191d;
+  --footer-text: #e6e8eb;
+
+  /* Verdicts: text / fill / border */
+  --prec-text: #17663a;
+  --prec-fill: #e8f4ec;
+  --prec-border: #b7dec4;
+  --supp-text: #0b6466;
+  --supp-fill: #e3f2f2;
+  --supp-border: #aedadb;
+  --gap-text: #7a4a00;
+  --gap-fill: #fcf0d8;
+  --gap-border: #efcb85;
+  --alert-text: #a51d14;
+  --alert-fill: #fceae8;
+  --alert-border: #f2b8b2;
+
+  /* Residue risk */
+  --risk-high: #c62d1f;
+  --risk-medium: #d98a00;
+  --risk-low: #7d8a99;
+
+  --r-card: 10px;
+  --r-control: 6px;
+  --r-chip: 13px;
+
+  --topbar-h: 56px;
+  --footer-h: 30px;
+  --panel-w: 344px;
+  --panel-w-tablet: 300px;
+  --rail-w: 44px;
+}
+
+@theme inline {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-text: var(--footer-text);
+
+  --color-prec-text: var(--prec-text);
+  --color-prec-fill: var(--prec-fill);
+  --color-prec-border: var(--prec-border);
+  --color-supp-text: var(--supp-text);
+  --color-supp-fill: var(--supp-fill);
+  --color-supp-border: var(--supp-border);
+  --color-gap-text: var(--gap-text);
+  --color-gap-fill: var(--gap-fill);
+  --color-gap-border: var(--gap-border);
+  --color-alert-text: var(--alert-text);
+  --color-alert-fill: var(--alert-fill);
+  --color-alert-border: var(--alert-border);
+
+  --color-risk-high: var(--risk-high);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-low: var(--risk-low);
+
+  --radius-card: var(--r-card);
+  --radius-control: var(--r-control);
+  --radius-chip: var(--r-chip);
+
+  --spacing-topbar: var(--topbar-h);
+  --spacing-footer: var(--footer-h);
+  --spacing-panel: var(--panel-w);
+  --spacing-panel-tablet: var(--panel-w-tablet);
+  --spacing-rail: var(--rail-w);
+}
+
+@theme {
+  /* Input panel narrows below this width (tablet). */
+  --breakpoint-desk: 1180px;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* One visible focus style for every interactive element (CODING_STANDARDS §8). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

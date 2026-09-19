@@ -58,7 +58,7 @@ Decided myself (A3/A4):
 **Tasks**
 - [x] 1. chore: pnpm via corepack (drop `package-lock.json`); scripts `typecheck`, `lint`, `format`, `test`, `test:e2e`; `noUncheckedIndexedAccess`; Prettier; jsx-a11y recommended; `.env.example` (`USE_MOCKS=true`); README.
 - [x] 2. chore(test): Vitest + RTL + jsdom config, Playwright config, one smoke test each.
-- [ ] 3. feat(tokens): foundation tokens as CSS vars mapped into Tailwind v4 `@theme`; IBM Plex Sans/Mono via `next/font`; reduced-motion base; `lib/utils/verdicts.ts` (single verdict/severity mapping) + `format.ts`, with unit tests.
+- [x] 3. feat(tokens): foundation tokens as CSS vars mapped into Tailwind v4 `@theme`; IBM Plex Sans/Mono via `next/font`; reduced-motion base; `lib/utils/verdicts.ts` (single verdict/severity mapping) + `format.ts`, with unit tests.
 - [ ] 4. feat(data): `lib/types` + zod schemas; mock session (user + 2 workspaces, cookie-selected active workspace); fixtures (4 Formulation runs from C01, 2 `[PLACEHOLDER]` Discovery runs); `lib/data/` (`listWorkspaces`, `listRecentRuns`, `getRunSummary`) scoped by session; `USE_MOCKS` switch; unit tests for scoping (another user's or workspace's run not found).
 - [ ] 5. feat(actions): `app/actions/workspace.ts` (`switchWorkspace`), `app/actions/runs.ts` (`openRun`, `loadExample`), typed `ActionResult`, zod inputs; route-handler stubs for events and simulations (session-scoped, return mock "pending").
 - [ ] 6. feat(ui): primitives Button, IconButton, Segmented, Tabs, Card, Chip, VerdictChip (4, icon + text), GradeBadge + A–E legend (hover and focus), Modal (trap, Esc, restore focus), Drawer, Menu (arrow keys, Esc), Notice ("Not connected yet"), icons; component tests for keyboard behaviour of Modal, Drawer, Menu, GradeBadge.

@@ -4,12 +4,12 @@ import { EXAMPLE, RUNS } from "@/lib/mocks/runs";
 import {
   runSummarySchema,
   stepKeys,
-  type Example,
   type RunEvents,
   type RunRecord,
   type RunSummary,
   type Steps,
 } from "@/lib/types/domain";
+import type { Example } from "@/lib/types/runInput";
 import { dataSource } from "./source";
 
 function toSummary(record: RunRecord): RunSummary {

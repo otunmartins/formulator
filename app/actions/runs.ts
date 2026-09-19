@@ -2,7 +2,8 @@
 
 import { z } from "zod";
 import { getExample, getRunSummary } from "@/lib/data/runs";
-import { runIdSchema, type Example, type RunSummary } from "@/lib/types/domain";
+import { runIdSchema, type RunSummary } from "@/lib/types/domain";
+import type { Example } from "@/lib/types/runInput";
 import { fail, ok, type ActionResult } from "@/lib/types/actions";
 
 const openRunInput = z.object({ runId: runIdSchema });

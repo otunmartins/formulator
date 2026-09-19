@@ -1,4 +1,5 @@
-import { runRecordSchema, exampleSchema, type Example, type RunRecord } from "@/lib/types/domain";
+import { runRecordSchema, type RunRecord } from "@/lib/types/domain";
+import { exampleSchema, type Example } from "@/lib/types/runInput";
 
 // Titles, IDs and statuses come from the reference screens (C01). Where a fixture doesn't
 // carry a value, it is null and the UI shows a visible [PLACEHOLDER]; nothing is invented.
@@ -97,8 +98,21 @@ const RUNS_RAW: RunRecord[] = [
 // Validate fixture shapes at load so a bad fixture fails loudly (CODING_STANDARDS §1).
 export const RUNS: readonly RunRecord[] = RUNS_RAW.map((r) => runRecordSchema.parse(r));
 
+// "Load example": PS80 × 1N8Z inputs as shown in the reference screens (S03) and the
+// data contract (polymer, chains A + B with antigen chain C excluded).
 export const EXAMPLE: Example = exampleSchema.parse({
   title: "Polysorbate 80 × 1N8Z Fab",
-  route: "SC",
-  context: PS80_CONTEXT,
+  input: {
+    excipient: {
+      query: "Polysorbate 80",
+      polymer: {
+        repeatUnit: "-(CH2CH2O)-",
+        endGroups: "Sorbitan monooleate ester / –OH",
+        dp: "w+x+y+z ≈ 20",
+        residualMonomers: ["Ethylene oxide", "1,4-dioxane"],
+      },
+    },
+    protein: { source: "pdb", id: "1N8Z", chains: ["A", "B"], excludedChains: ["C"] },
+    context: PS80_CONTEXT,
+  },
 });

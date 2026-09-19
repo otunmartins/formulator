@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, type Dispatch } from "react";
-import type { Example, Mode, RunSummary } from "@/lib/types/domain";
+import type { Mode, RunSummary } from "@/lib/types/domain";
+import type { Example } from "@/lib/types/runInput";
 
 // Screen-wide UI state (foundation state model), held in one reducer so later builds
 // extend it instead of drilling props. TODO(build-03): run state and steps.

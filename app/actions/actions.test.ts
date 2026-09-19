@@ -42,7 +42,7 @@ describe("openRun", () => {
 describe("loadExample", () => {
   it("returns the PS80 × 1N8Z template", async () => {
     const result = await loadExample();
-    expect(result.ok && result.data.context.route).toBe("SC");
+    expect(result.ok && result.data.input.context.route).toBe("SC");
   });
 });
 

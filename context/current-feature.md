@@ -1,6 +1,6 @@
 # Current Build
 
-Status: review
+Status: ready
 Build: 03 · Run lifecycle
 Spec: context/features/03-run-lifecycle.spec.md
 Image: context/screenshots/03-run-lifecycle.png
@@ -14,20 +14,20 @@ Drive the progress strip from mocked step events (`startRun` returns a run ID; t
 
 ## Done when
 Spec:
-- [ ] S04–S06 match their screens.
-- [ ] An unresolved identity pauses the run rather than failing it.
-- [ ] Retry does not re-run completed steps.
-- [ ] Sign off stays disabled unless the run is complete.
+- [x] S04–S06 match their screens.
+- [x] An unresolved identity pauses the run rather than failing it.
+- [x] Retry does not re-run completed steps.
+- [x] Sign off stays disabled unless the run is complete.
 
 Foundation (every build):
-- [ ] The build's screens match their reference images in layout and copy.
-- [ ] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
-- [ ] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
-- [ ] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
-- [ ] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
-- [ ] The footer disclaimer is visible; no project layer exists.
-- [ ] Stubbed actions show "Not connected yet" rather than failing silently.
-- [ ] Nothing from a later build is started early.
+- [x] The build's screens match their reference images in layout and copy.
+- [x] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
+- [x] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
+- [x] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
+- [x] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
+- [x] The footer disclaimer is visible; no project layer exists.
+- [x] Stubbed actions show "Not connected yet" rather than failing silently.
+- [x] Nothing from a later build is started early.
 
 ## Open questions
 None blocking. Doc-only: the spec mentions streamed events; foundation and task 1 say polling (built). S05's header says "Tween 80 HP-K" while its panel shows Polysorbate 80. The image still shows the removed Draw structure button.
@@ -75,7 +75,12 @@ Decided myself:
 No product-rule issues: no "safe", no score, every status is icon + text, one screen, all run lookups owner + workspace scoped, dev action refused in production.
 
 ## Tests
-—
+2026-09-19 · **Checks run:** typecheck ✓ · lint ✓ · unit/component ✓ (132 passed, 16 files) · e2e ✓ (21 passed) · build ✓ · visual check ✓
+- Visual: S04, S05, S06 against the reference at 1440, 1280 and 1024. Differences are by decision: S06 verdict chips and rows are Build 04, and the image's Draw structure button was removed in Build 02.
+- Keyboard: Tab reaches the candidates (arrow keys switch), the override and "Use and continue"; Enter submits; "Retry hazard step" is reachable. Focus is visible throughout and lands on the progress strip after each action. No modals in this build; the Build 01 Esc/focus-trap e2e still passes.
+- Reduced motion: tick, reveal and spinner animations drop to 0.01 ms (verified in Chromium with `reducedMotion: reduce`); status stays as text.
+- Done-when evidence: pause → `run.spec` S05 (still paused after 2 s) + `runScripts.test`; retry keeps steps → `run.spec` S06 + `runScripts.test`; Sign off gating → `run.test` ReviewBar + e2e; scoping → `runStore.test` / `scoping.test`; mocks/`USE_MOCKS`/"safe" → `guards.test`; stubs → `run.test` + `shell.spec`.
+- Flaky: `inputPanel.test.tsx` ("include or exclude chains", "sends only the active protein tab", Build 02) failed once in 6 full runs and couldn't be reproduced (0/3 alone, 0/4 full, 0/1 under build load). Probably timing under load; cause unconfirmed, tests unchanged.
 
 ## Log
 - 2026-09-19 — Loaded Build 03 · Run lifecycle. Dependencies 01 and 02 merged. Spec and image read; 4 open questions.
@@ -84,3 +89,4 @@ No product-rule issues: no "safe", no score, every status is icon + text, one sc
 - 2026-09-19 — Task 3: overrides are checked on the server: CAS numbers must have a valid check digit, SMILES get a loose shape check (allowed characters, balanced brackets; real parsing is phase 2). `startRun` calls `refresh()` so the run appears in Recent runs. The guard test caught the dev action importing `lib/mocks`; the backdating moved into `lib/data` (`createDevRun`).
 - 2026-09-19 — Tasks 4–8: `RunArea` owns the strip and what sits under it (empty card, skeleton, identity card, error banner + precedent-only hand-off, complete hand-off). Load example and Run share `useStartRun`; Load example no longer sets the header itself (the started run does). Sign off enables only on complete (stub); exports/share enable on complete or partial (stub); Run manifest stays disabled (Build 07). Tablet (≤1180 px) collapses the panel when a completed run arrives, including opening a completed run. Truncated step notes carry a `title`. Checks: typecheck ✓ · lint ✓ · unit 132 ✓ · e2e 21 ✓ · visual S04/S05/S06 at 1440 ✓.
 - 2026-09-19 — review: 3 medium + 2 low fixed, 3 low open (see Review). Checks after fixes: typecheck ✓ · lint ✓ · unit 132 ✓ · e2e 21 ✓.
+- 2026-09-19 — test: all checks pass (132 unit, 21 e2e, build); visual, keyboard and reduced-motion checks done; all Done-when items ticked. One intermittent Build 02 unit-test failure noted. Status ready.

@@ -31,7 +31,7 @@ export function Select<T extends string>({
         const next = options.find((o) => o.value === e.target.value);
         if (next) onChange(next.value);
       }}
-      className={cn(controlClassName, "h-9 pr-7", className)}
+      className={cn(controlClassName, "h-9 pr-1", className)}
       {...rest}
     >
       {options.map((o) => (

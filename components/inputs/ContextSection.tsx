@@ -66,13 +66,16 @@ export function ContextSection() {
                 onChange={(e) => update({ doseValue: e.target.value })}
                 className="min-w-0 flex-1 rounded-r-none"
               />
-              <Select
-                aria-label="Dose unit"
-                options={DOSE_UNITS}
-                value={draft.doseUnit}
-                onChange={(doseUnit) => update({ doseUnit })}
-                className="w-[4.25rem] shrink-0 rounded-l-none border-l-0 bg-surface-subtle px-1.5 pr-5 text-xs"
-              />
+              {/* Fixed-width wrapper: the shared control style sets w-full on the select. */}
+              <div className="w-[4.5rem] shrink-0">
+                <Select
+                  aria-label="Dose unit"
+                  options={DOSE_UNITS}
+                  value={draft.doseUnit}
+                  onChange={(doseUnit) => update({ doseUnit })}
+                  className="rounded-l-none border-l-0 bg-surface-subtle px-1.5 text-xs"
+                />
+              </div>
             </div>
           )}
         </Field>

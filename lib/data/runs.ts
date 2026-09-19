@@ -5,6 +5,7 @@ import {
   candidatesFor,
   HAZARD_FAIL_TRIGGER,
   PS80_1N8Z_NOTES,
+  STEP_MS,
   timelineAt,
   type StoredRun,
 } from "@/lib/mocks/runScripts";
@@ -219,6 +220,31 @@ export async function retryRunStep(
   const retried: StoredRun = { ...run, retries: [...run.retries, { step, at: now }] };
   await saveStoredRun(retried);
   return timelineAt(retried, now);
+}
+
+export type DevRunState = "S04" | "S05" | "S06";
+
+/**
+ * Dev state switcher only: starts the example run backdated so it lands on a reference screen
+ * (S04 mid-hazard, S05 paused at identity, S06 failed at hazard). Returns the request too, so
+ * the panel can show the inputs that produced it.
+ */
+export async function createDevRun(
+  state: DevRunState,
+): Promise<{ run: RunSummary; request: RunRequest }> {
+  const example = (await getExample()).input;
+  const { identity: I, precedent: P, hazard: H } = STEP_MS;
+  const setup = {
+    S04: { query: example.excipient.query, backdate: I + P + H / 2 },
+    S05: { query: "Tween 80 HP-K", backdate: I + 100 },
+    S06: { query: "Polysorbate 20", backdate: I + P + H + 100 },
+  }[state];
+  const request: RunRequest = {
+    ...example,
+    excipient: { ...example.excipient, query: setup.query },
+  };
+  const run = await createRun(request, new Date(Date.now() - setup.backdate));
+  return { run, request };
 }
 
 /** Simulation job status. No jobs exist before Build 06. TODO(build-06): mock job replay. */

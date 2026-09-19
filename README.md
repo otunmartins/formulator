@@ -23,7 +23,7 @@ pnpm dev                           # http://localhost:3000
 | `pnpm lint` | ESLint (Next + TypeScript + jsx-a11y) |
 | `pnpm format` / `pnpm format:check` | Prettier |
 | `pnpm test` | Unit and component tests (Vitest + Testing Library) |
-| `pnpm test:e2e` | End-to-end tests (Playwright, starts a dev server on port 3100) |
+| `pnpm test:e2e` | End-to-end tests (Playwright, reuses or starts the dev server on port 3000) |
 
 ## Environment
 

@@ -7,7 +7,22 @@ import { endpointSchema, type Endpoint } from "@/lib/types/dossier";
 // Out-of-domain text is stored without its "Out of domain:" prefix; the UI adds it.
 // TODO(phase-2): Endpoint and Source rows written by the precedent and hazard pipelines.
 
-export type EndpointSetId = "ps80" | "alx117";
+export const endpointSetIdSchema = z.enum(["ps80", "alx117"]);
+export type EndpointSetId = z.infer<typeof endpointSetIdSchema>;
+
+/** CAS numbers with an endpoint fixture (for candidates and CAS overrides). */
+const SET_BY_CAS: Record<string, EndpointSetId> = { "9005-65-6": "ps80" };
+/** Resolved excipient names with an endpoint fixture. */
+const SET_BY_NAME: Record<string, EndpointSetId> = {
+  "polysorbate 80": "ps80",
+  "alx-117": "alx117",
+};
+
+/** The endpoint fixture for an identity, or null when none exists (a placeholder row shows). */
+export function endpointSetFor(identity: { name?: string; cas?: string }): EndpointSetId | null {
+  if (identity.cas && SET_BY_CAS[identity.cas]) return SET_BY_CAS[identity.cas] ?? null;
+  return (identity.name && SET_BY_NAME[identity.name.trim().toLowerCase()]) || null;
+}
 
 const PLACEHOLDER_SOURCES = [{ title: "[PLACEHOLDER]", meta: "[PLACEHOLDER]" }];
 const LIABILITY_MET = { title: "Liability map: HC Met107, HC Met83", meta: "1N8Z · FreeSASA 2.1" };

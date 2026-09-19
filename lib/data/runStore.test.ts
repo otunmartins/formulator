@@ -95,8 +95,9 @@ describe("createRun + getRunEvents", () => {
     expect(failed?.steps.identity.note).toBe("Polysorbate 20 · CAS [PLACEHOLDER]");
 
     const alx = await createRun(request("ALX-117"), T0);
+    // On 1N8Z the S15 notes apply (Build 04).
     expect((await getRunEvents(alx.runId, t(I)))?.steps.identity.note).toBe(
-      "ALX-117 · user SMILES",
+      "User SMILES · no registry match",
     );
   });
 

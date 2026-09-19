@@ -104,6 +104,17 @@ describe("getDossier", () => {
     expect(partial.endpoints.every((e) => e.verdict === "prec")).toBe(true);
   });
 
+  it("S15 (dev): ALX-117 at 1.0 mg/mL with the polymer fields from its input panel", async () => {
+    const { run, request } = await createDevRun("S15");
+    expect(run.context?.conc_mg_mL).toBe(1);
+    expect(request.excipient.polymer).toEqual({
+      repeatUnit: "-(OCH2CH2)- / -(OCH(CH3)CO)-[PLACEHOLDER]",
+      endGroups: "Methoxy / –OH",
+      dp: "PEG ≈ 45, PLGA [PLACEHOLDER]",
+      residualMonomers: ["Lactide", "glycolide"],
+    });
+  });
+
   it("an identity resolved to PS80 (candidate or CAS override) gets the PS80 endpoints", async () => {
     const byCandidate = await createRun(request("Tween 80 HP-K"), T0);
     const pausedAt = T0.getTime() + I + 10;

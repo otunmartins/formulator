@@ -98,6 +98,32 @@ test("S06: after a hazard failure only the precedent endpoints are shown", async
   await expect(matrix(page).getByRole("rowheader")).toHaveCount(8, { timeout: RUN_MS });
 });
 
+test("S15 (dev): the panel shows ALX-117's polymer fields and 1.0 mg/mL", async ({ page }) => {
+  await page.getByRole("button", { name: "S15: Novel excipient for this route" }).click();
+  await expect(page.getByRole("region", { name: "Needs a nonclinical package" })).toBeVisible({
+    timeout: RUN_MS,
+  });
+  await expect(
+    page.getByText("SC · 150 mg every 2 weeks · 1.0 mg/mL excipient · stored at 25 °C"),
+  ).toBeVisible();
+  await expect(panel(page).getByRole("switch", { name: "Polymer" })).toHaveAttribute(
+    "aria-checked",
+    "true",
+  );
+  await expect(panel(page).getByRole("textbox", { name: "End groups" })).toHaveValue(
+    "Methoxy / –OH",
+  );
+  await expect(panel(page).getByRole("textbox", { name: "Residual monomers" })).toHaveValue(
+    "Lactide, glycolide",
+  );
+  await expect(panel(page).getByRole("textbox", { name: "Approx. DP" })).toHaveValue(
+    "PEG ≈ 45, PLGA [PLACEHOLDER]",
+  );
+  await expect(panel(page).getByRole("textbox", { name: "Excipient concentration" })).toHaveValue(
+    "1.0",
+  );
+});
+
 test("an excipient without an endpoint fixture shows a placeholder row, not verdicts", async ({
   page,
 }) => {

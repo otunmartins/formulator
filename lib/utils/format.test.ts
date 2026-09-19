@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { formatContextLine, formatRunTime, reviewLabel, shortRunId } from "./format";
+import { formatConc, formatContextLine, formatRunTime, reviewLabel, shortRunId } from "./format";
 
 describe("shortRunId", () => {
   it("drops the year", () => {
@@ -22,6 +22,13 @@ describe("formatContextLine", () => {
         storage_C: 25,
       }),
     ).toBe("SC · 150 mg every 2 weeks · 0.2 mg/mL excipient · stored at 25 °C");
+  });
+
+  it("shows a whole-number concentration with one decimal, as S15 does (1.0 mg/mL)", () => {
+    expect(formatConc(1)).toBe("1.0");
+    expect(formatConc(0.2)).toBe("0.2");
+    expect(formatConc(0.125)).toBe("0.125");
+    expect(formatConc(12)).toBe("12.0");
   });
 });
 

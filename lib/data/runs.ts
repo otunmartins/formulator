@@ -1,7 +1,7 @@
 import "server-only";
 import { getSession } from "@/lib/auth/session";
 import { endpointSetFor } from "@/lib/mocks/endpoints";
-import { EXAMPLE, RUNS } from "@/lib/mocks/runs";
+import { ALX117_POLYMER, EXAMPLE, RUNS } from "@/lib/mocks/runs";
 import {
   ALX117_1N8Z_NOTES,
   candidatesFor,
@@ -272,8 +272,8 @@ export async function createDevRun(
     state === "S15"
       ? {
           ...example,
-          // S15: ALX-117 at 1.0 mg/mL. Its polymer fields in the image are cut off, so none are sent.
-          excipient: { query: setup.query, polymer: null },
+          // S15: ALX-117 at 1.0 mg/mL with the polymer fields from its input panel.
+          excipient: { query: setup.query, polymer: ALX117_POLYMER },
           context: { ...example.context, conc_mg_mL: 1 },
         }
       : { ...example, excipient: { ...example.excipient, query: setup.query } };

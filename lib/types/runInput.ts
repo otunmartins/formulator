@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { formatConc } from "@/lib/utils/format";
 import {
   runContextSchema,
   type DoseUnit,
@@ -304,7 +305,7 @@ export function draftFromRequest(
     doseValue: String(context.dose.value),
     doseUnit: context.dose.unit,
     frequency: context.frequency,
-    conc: String(context.conc_mg_mL),
+    conc: formatConc(context.conc_mg_mL),
     storage: context.storage_C,
   };
   switch (protein.source) {

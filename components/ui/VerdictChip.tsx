@@ -21,6 +21,8 @@ export function VerdictChip({ verdict, count, size, className }: VerdictChipProp
       className={`${style.className} ${className ?? ""}`}
     >
       {count !== undefined && <span>{count}</span>}
+      {/* A real space so assistive tech reads "3 Precedented", not "3Precedented". */}
+      {count !== undefined && " "}
       {style.label}
     </Chip>
   );

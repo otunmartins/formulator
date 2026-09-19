@@ -53,7 +53,7 @@ Asked (2026-09-19):
 - [x] 4. feat(dossier): expandable rows (chevron, aria-expanded, aria-controls) with SourceList; placeholder row for excipients without a fixture.
 - [x] 5. feat(dossier): NovelBanner and S15; partial mode under the S06 banner (header note kept).
 - [x] 6. feat(dev): switcher S07 and S15 (completed backdated runs).
-- [ ] 7. test: component tests (counts, expand/collapse keyboard, legend on focus, OOD, novel banner, placeholder, partial) + e2e (S07 happy path, S15 via ALX-117, S06 partial shows 3 rows); guard test that no verdict label or fixture says "safe"; earlier tests green.
+- [x] 7. test: component tests (counts, expand/collapse keyboard, legend on focus, OOD, novel banner, placeholder, partial) + e2e (S07 happy path, S15 via ALX-117, S06 partial shows 3 rows); guard test that no verdict label or fixture says "safe"; earlier tests green.
 
 **New dependencies:** none.
 
@@ -67,3 +67,4 @@ Asked (2026-09-19):
 - 2026-09-19 — Loaded Build 04 · Dossier: verdict matrix. Dependencies 01 and 03 merged. Spec and image read (rows cropped at full resolution); 5 open questions.
 - 2026-09-19 — start: 5 questions answered (see Decisions); plan written, 7 tasks. Status planned.
 - 2026-09-19 — Tasks 1–2: fixtures typed from the image (OOD text stored without its "Out of domain:" prefix). The endpoint set is stored on the run (`endpointSet`, default null for older cookies) and decided at start (resolved name or CAS) and on identity resolve (candidate CAS or CAS override; SMILES overrides get none). `getDossier` applies the novel rule itself, so no caller can show a positive verdict for a novel excipient. The score guard caught a comment saying "no overall score"; the comment was reworded, the guard kept.
+- 2026-09-19 — Tasks 3–7: `DossierSection` owns the matrix with loading (skeleton), error (alert + "Try again") and loaded states; the novel banner sits above the matrix. Rows use a real `<table>` (row headers per endpoint, a hidden details row per endpoint for sources). Added a `size="sm"` Chip/VerdictChip variant for the header counts (they wrapped at 1440). Tests found that the count chips read "3Precedented" to assistive tech; a real space fixes it. `useDossier` derives its loading state (lint: no setState in effects). Dev S15 sends no polymer fields (cut off in the image) and conc 1 mg/mL. Build 03 e2e now waits for the matrix header instead of the removed hand-off text. Checks: typecheck ✓ · lint ✓ · unit 162 ✓ · e2e 26 ✓ · visual S07/S15/S06 at 1440 and S07 at 1024 ✓.

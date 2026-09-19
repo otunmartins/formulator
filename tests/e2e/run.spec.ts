@@ -32,7 +32,7 @@ test("S04: Load example runs through every step to complete", async ({ page }) =
   await expect(step(page, 0)).toContainText("Polysorbate 80 · CAS 9005-65-6", { timeout: RUN_MS });
   await expect(step(page, 1)).toContainText("6 sources", { timeout: RUN_MS });
   await expect(step(page, 3)).toContainText("4 sites on 1N8Z", { timeout: RUN_MS });
-  await expect(page.getByText("All steps complete")).toBeVisible();
+  await expect(page.getByText("No overall score · each endpoint stands alone")).toBeVisible();
   await expect(signOff(page)).toBeEnabled();
   await expect(page.getByRole("button", { name: "Export PDF" })).toBeEnabled();
   await expect(page).toHaveURL("/");
@@ -64,7 +64,9 @@ test("S05: an unresolved identity pauses the run; an override resumes it at Prec
   await expect(strip(page)).toBeFocused();
   await expect(step(page, 0)).toContainText("Override · CAS 9005-65-6");
   await expect(step(page, 1)).toContainText("Running");
-  await expect(page.getByText("All steps complete")).toBeVisible({ timeout: RUN_MS });
+  await expect(page.getByText("No overall score · each endpoint stands alone")).toBeVisible({
+    timeout: RUN_MS,
+  });
   await expect(signOff(page)).toBeEnabled();
 });
 
@@ -87,7 +89,9 @@ test("S06: a failed step shows the banner; retry keeps completed steps", async (
   await expect(step(page, 2)).toContainText("Running");
   await expect(step(page, 0)).toContainText("Polysorbate 20 · CAS");
   await expect(step(page, 1)).toContainText("Done: Complete");
-  await expect(page.getByText("All steps complete")).toBeVisible({ timeout: RUN_MS });
+  await expect(page.getByText("No overall score · each endpoint stands alone")).toBeVisible({
+    timeout: RUN_MS,
+  });
   await expect(signOff(page)).toBeEnabled();
 });
 
@@ -107,7 +111,9 @@ test.describe("tablet", () => {
   test("the input panel collapses once a run completes", async ({ page }) => {
     await page.getByRole("button", { name: /Load example/ }).click();
     await expect(page.getByRole("button", { name: "Collapse input panel" })).toBeVisible();
-    await expect(page.getByText("All steps complete")).toBeVisible({ timeout: RUN_MS });
+    await expect(page.getByText("No overall score · each endpoint stands alone")).toBeVisible({
+      timeout: RUN_MS,
+    });
     await expect(page.getByRole("button", { name: "Expand input panel" })).toBeVisible();
   });
 });

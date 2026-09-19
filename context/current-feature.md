@@ -1,28 +1,66 @@
 # Current Build
 
-Status: idle
-Build: —
-Spec: —
-Image: —
-Depends on: —
-Branch: —
-Base: —
-Loaded: —
+Status: in-progress
+Build: 03 · Run lifecycle
+Spec: context/features/03-run-lifecycle.spec.md
+Image: context/screenshots/03-run-lifecycle.png
+Depends on: 01, 02 (both merged 2026-09-19)
+Branch: build/03-run-lifecycle
+Base: main
+Loaded: 2026-09-19
 
 ## Goal
-—
+Drive the progress strip from mocked step events (`startRun` returns a run ID; the client polls the events route every 1–2 s) and handle the two interruptions: an unresolved identity pauses the run for a candidate or override, and a failed step shows an error banner with a retry that resumes from that step while keeping completed results (S04, S05, S06).
 
 ## Done when
-—
+Spec:
+- [ ] S04–S06 match their screens.
+- [ ] An unresolved identity pauses the run rather than failing it.
+- [ ] Retry does not re-run completed steps.
+- [ ] Sign off stays disabled unless the run is complete.
+
+Foundation (every build):
+- [ ] The build's screens match their reference images in layout and copy.
+- [ ] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
+- [ ] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
+- [ ] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
+- [ ] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
+- [ ] The footer disclaimer is visible; no project layer exists.
+- [ ] Stubbed actions show "Not connected yet" rather than failing silently.
+- [ ] Nothing from a later build is started early.
 
 ## Open questions
-—
+None blocking. Doc-only: the spec mentions streamed events; foundation and task 1 say polling (built). S05's header says "Tween 80 HP-K" while its panel shows Polysorbate 80. The image still shows the removed Draw structure button.
 
 ## Decisions
-—
+Asked (2026-09-19):
+- **Matrix area:** skeleton while running; once steps finish, a "Verdict matrix" hand-off card (S06 header line kept, e.g. "Precedent endpoints only · hazard step failed"; rows "Not connected yet") with a typed `endpoints` extension point for Build 04. No invented verdicts.
+- **Scripts:** no registry match → identity unresolved; "Tween 80 HP-K" gets the image's two candidates, other unmatched names get the override only. Excipient "Polysorbate 20" → hazard fails (HTTP 504). Everything else (PS80, ALX-117, …) → happy path. The dev switcher jumps to S04–S06.
+- **Run state:** mock run state in an httpOnly cookie (set only by server actions, zod-checked on read, scoped to the session user and workspace). Works on Vercel's serverless functions; replaced by Postgres in phase 2 inside `lib/data/` only.
+- **Load example:** fills the panel and starts the PS80 × 1N8Z run straight away.
+Decided myself:
+- Step notes: the PS80 × 1N8Z values from the screens (identity "Polysorbate 80 · CAS 9005-65-6", "6 sources", "8 endpoints", "4 sites on 1N8Z"); other runs show "Complete". "Polysorbate 20" identity note uses CAS `[PLACEHOLDER]` (no fixture).
+- Runs started this session appear in Recent runs (from the cookie) and reopen with their live status; fixture runs open as complete.
+- Sign off becomes enabled only when the run is complete and shows "Not connected yet" (dialog is Build 07). Export and share links enable once results exist (partial or complete), also "Not connected yet" (S06: exports allowed on partial results).
+- At ≤1180 px the input panel collapses when a run completes (Build 01 note).
 
 ## Plan
-—
+**Restatement**
+- Build: mock event scripts with a pure timeline (happy / unresolved / hazard failure), the cookie run store behind `lib/data/`, `startRun` storing a run, `resolveIdentity` (candidate or CAS/SMILES override, recorded with user and time for the manifest) and `retryStep` actions, the events route returning live step state, a polling hook (1.5 s, stops on pause/error/complete/unmount), the progress strip states (animated tick, spinner, error, needs input), skeleton matrix, S05 identity card, S06 error banner with retry, hand-off matrix card, review-bar gating, dev switcher S04–S06.
+- Won't touch: verdict rows and endpoint fixtures (04), liability map (05), simulation (06), sign-off dialog/manifest drawer (07), Ask (08), Batch (09).
+- Files: `lib/mocks/runScripts.ts`, `lib/data/{runStore,runs}.ts`, `lib/types/{domain,runEvents}.ts`, `app/actions/{runs,dev}.ts`, `app/api/runs/[runId]/events/route.ts`, `components/run/*` (useRunEvents, ProgressStrip, SkeletonMatrix, IdentityResolver, StepErrorBanner, MatrixHandoff, RunArea), `components/shell/{Screen,screenState,EmptyState,ReviewBar,DevStateSwitcher}.tsx`, `components/ui/Icon.tsx`, `app/globals.css` (tick/reveal keyframes), tests.
+
+**Tasks**
+- [x] 1. feat(mocks): event scripts and a pure `timelineAt(state, now)` → steps, run state, candidates, error; unit tests (pause, resume at Precedent, retry keeps completed steps).
+- [ ] 2. feat(data): httpOnly cookie run store (zod-validated, owner + workspace scoped, last 10 runs); `createRun` stores a run with its script; `getRunEvents` from the timeline; Recent runs / open run include stored runs; `resolveRunIdentity`, `retryRunStep`; unit tests incl. another user's cookie run not visible.
+- [ ] 3. feat(actions): script selection in `startRun`; `resolveIdentity` and `retryStep` actions (zod; CAS/SMILES check); events route returns the extended shape; dev-only `startDevRun` (S04/S05/S06, refused in production); tests.
+- [ ] 4. feat(run): `useRunEvents` polling hook into screen state; progress strip states with animated tick and spinner (reduced motion honoured); skeleton matrix with section reveal; Load example fills and starts.
+- [ ] 5. feat(run): S05 identity card (candidate radios, override field, "Use and continue", validation), run resumes at Precedent.
+- [ ] 6. feat(run): S06 error banner with "Retry hazard step"; hand-off matrix card (partial and complete); review bar gating; tablet collapse after completion.
+- [ ] 7. feat(dev): switcher S04, S05, S06.
+- [ ] 8. test: component tests (strip states, resolver, banner, gating) + e2e (happy path to complete, unresolved → override → resumes at Precedent, hazard failure → retry keeps completed steps); keep earlier tests green.
+
+**New dependencies:** none.
 
 ## Review
 —
@@ -31,4 +69,5 @@ Loaded: —
 —
 
 ## Log
-—
+- 2026-09-19 — Loaded Build 03 · Run lifecycle. Dependencies 01 and 02 merged. Spec and image read; 4 open questions.
+- 2026-09-19 — start: 4 questions answered (see Decisions); plan written, 8 tasks. Status planned.

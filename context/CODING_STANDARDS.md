@@ -41,7 +41,7 @@ context/                    # specs, screenshots, build tracking; never import f
 - Server Components by default. Add `'use client'` only for interactivity, and keep client components small.
 - Everything in `lib/data/` starts with `import 'server-only'`.
 - Mutations → Server Actions. Reads → Server Components calling `lib/data/`. Live progress → client polling of the route handlers (1–2 s, stop on done, error or unmount).
-- Browser-only libraries (3D viewer, trajectory viewer, structure editor) load via `next/dynamic` with `ssr: false`, behind a typed wrapper component.
+- Browser-only libraries (3D viewer, trajectory viewer) load via `next/dynamic` with `ssr: false`, behind a typed wrapper component.
 
 ## 5. Data layer and ownership
 - Components never import `lib/mocks/` or Prisma. Only `lib/data/` does, and only `lib/data/` reads `USE_MOCKS`.
@@ -92,7 +92,7 @@ context/                    # specs, screenshots, build tracking; never import f
 
 ## 12. Dependencies
 - Prefer the platform and existing deps. Each new dependency needs a one-line reason in the build report: what it does, why not a simpler option, and its maintenance status.
-- Allowed as needed: zod, clsx/tailwind-merge, a small icon set (or inline SVG), a Mol*/3Dmol.js wrapper, Ketcher/JSME, a lightweight chart approach (plain SVG preferred).
+- Allowed as needed: zod, clsx/tailwind-merge, a small icon set (or inline SVG), a Mol*/3Dmol.js wrapper, a lightweight chart approach (plain SVG preferred).
 - No UI kit that fights the design tokens; no state library unless context + hooks clearly fail.
 
 ## 13. Git and commits

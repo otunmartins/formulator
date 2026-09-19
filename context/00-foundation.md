@@ -24,8 +24,8 @@ Instead:
 - **Simulated timing.** `subscribeRunEvents` and `getSimulationStatus` replay mock events on timers, so the progress strip and simulation stepper behave as they will live.
 - **Mock switch.** Add a server-side env var `USE_MOCKS=true` (no `NEXT_PUBLIC_` prefix; only `lib/data/` reads it). It chooses between mocks now and Prisma/worker calls later, with no component changes.
 - **State preview.** Add a dev-only state switcher (hidden in production) to jump to any step S01–C03 for review.
-- **Client-only libraries.** Load the 3D viewer, trajectory viewer and structure editor as client components with `next/dynamic` and `ssr: false`.
-- **Placeholder viewers.** Use placeholders for the 3D protein viewer, trajectory viewer and structure editor unless a library drops in cleanly. Keep their props shaped for the real data (structure ID, sites, selection, frames).
+- **Client-only libraries.** Load the 3D viewer and trajectory viewer as client components with `next/dynamic` and `ssr: false`.
+- **Placeholder viewers.** Use placeholders for the 3D protein viewer and trajectory viewer unless a library drops in cleanly. Keep their props shaped for the real data (structure ID, sites, selection, frames).
 - **Visible stubs.** Buttons for later features (Export PDF/DOCX, Copy share link) work in the UI but call the stub and show a brief "Not connected yet" notice. They must not fail silently.
 
 Where a step's build notes below mention the backend (streamed events, job queue, retrieval, immutable manifest), treat that as the contract the mock must imitate, not as work to do now.
@@ -95,7 +95,7 @@ A regulatory precedent at this route and level · B experimental data · C in-do
 Residue risk: High `#C62D1F`, Medium `#D98A00`, Low `#7D8A99`, always with the text label.
 
 ## Component inventory
-TopBar, ModeToggle, RecentRunsMenu, UserMenu · InputPanel (ExcipientField, StructureEditorModal, PolymerFields, ProteinTabs, ContextFields, RunButton, BatchCsvInput) · RunHeader · ProgressStrip · VerdictMatrix (VerdictRow, VerdictChip, GradeBadge+Legend, SourceList, OodWarning) · BatchMatrix · NovelBanner · IdentityResolver · ErrorBanner · LiabilityMap (Viewer3D, SequenceTrack, SiteList, SiteCard, TempToggle) · SimulationCard (Locked, Running stepper, Complete: GammaChart, OccupancyStrip, TrajectoryViewer) · ReviewBar (StatusChip, SignOffModal, Export, ShareLink, ManifestDrawer) · AskDrawer · Footer.
+TopBar, ModeToggle, RecentRunsMenu, UserMenu · InputPanel (ExcipientField, PolymerFields, ProteinTabs, ContextFields, RunButton, BatchCsvInput) · RunHeader · ProgressStrip · VerdictMatrix (VerdictRow, VerdictChip, GradeBadge+Legend, SourceList, OodWarning) · BatchMatrix · NovelBanner · IdentityResolver · ErrorBanner · LiabilityMap (Viewer3D, SequenceTrack, SiteList, SiteCard, TempToggle) · SimulationCard (Locked, Running stepper, Complete: GammaChart, OccupancyStrip, TrajectoryViewer) · ReviewBar (StatusChip, SignOffModal, Export, ShareLink, ManifestDrawer) · AskDrawer · Footer.
 
 ## State model
 ```ts
@@ -106,7 +106,7 @@ type Steps = Record<'identity'|'precedent'|'hazard'|'liability', {status: StepSt
 type SimState = 'locked' | 'running' | 'complete'
 type Review = { status: 'draft' | 'signed'; version: number; signedBy?: string; signedAt?: string }
 UI: { selectedEndpointIds: Set<string>; selectedSiteId: string; temp: '4'|'25';
-      batchSelectedId?: string; drawer: 'ask'|'manifest'|null; modal: 'structure'|'signoff'|null;
+      batchSelectedId?: string; drawer: 'ask'|'manifest'|null; modal: 'signoff'|null;
       panelCollapsed: boolean }
 ```
 Rules:
@@ -120,7 +120,7 @@ Rules:
   "runId": "RUN-2026-0918-0412",
   "input": { "excipient": {"query":"Polysorbate 80","cas":"9005-65-6","smiles":null,
              "polymer":{"repeatUnit":"-(CH2CH2O)-","endGroups":"...","dp":"≈20","residualMonomers":["ethylene oxide","1,4-dioxane"]}},
-             "protein": {"source":"pdb","id":"1N8Z","chains":["A","B"]},
+             "protein": {"source":"pdb","id":"1N8Z","chains":["A","B"],"excludedChains":["C"]},
              "context": {"route":"SC","dose":{"value":150,"unit":"mg"},"frequency":"q2w","conc_mg_mL":0.2,"storage_C":25} },
   "steps": { "identity":{"status":"done","note":"..."}, "precedent":{}, "hazard":{}, "liability":{} },
   "novelForRoute": false,
@@ -139,6 +139,10 @@ Rules:
   "manifest": { "inputs":{}, "tools":{"RDKit":"2025.09.1","OpenMM":"8.2.0"}, "databases":{"FDA IID":"2026-07-01"}, "models":{} }
 }
 ```
+Protein sources (added 2026-09-19): `{source:"pdb", id, chains, excludedChains}` · `{source:"uniprot", id}` · `{source:"sequence", fasta}` · `{source:"upload", fileName, format:"pdb"|"mmcif"}`. Only the active source is sent; Phase 1 uploads send file metadata only.
+
+No structure editor (removed 2026-09-19): the excipient is entered as a name, CAS or SMILES.
+
 Batch: `{ "rows":[{ "id","name","identifier","conc", "endpoints":[...] }], "selectedId" }`. The dossier below the matrix renders the same objects as Single mode.
 
 ## Builds (in order)
@@ -147,7 +151,7 @@ Similar screens are merged into one build. Build 01 is the shell that every late
 | Build | Spec | Screens | Depends on |
 |---|---|---|---|
 | 01 · App shell (common to every screen) | `context/features/01-app-shell.spec.md` | S01, C01, C02, C03 | — |
-| 02 · Inputs panel | `context/features/02-inputs.spec.md` | S03, S02 | 01 |
+| 02 · Inputs panel | `context/features/02-inputs.spec.md` | S03 (S02 removed) | 01 |
 | 03 · Run lifecycle | `context/features/03-run-lifecycle.spec.md` | S04, S05, S06 | 01, 02 |
 | 04 · Dossier: verdict matrix | `context/features/04-verdict-matrix.spec.md` | S07, S15 | 01, 03 |
 | 05 · Liability map | `context/features/05-liability-map.spec.md` | S08 | 01, 04 |

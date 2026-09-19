@@ -1,6 +1,6 @@
 # Current Build
 
-Status: review
+Status: ready
 Build: 04 · Dossier: verdict matrix
 Spec: context/features/04-verdict-matrix.spec.md
 Image: context/screenshots/04-verdict-matrix.png
@@ -14,19 +14,19 @@ Replace Build 03's matrix hand-off with the endpoint-by-endpoint dossier: verdic
 
 ## Done when
 Spec:
-- [ ] S07 and S15 match their screens.
-- [ ] The word "safe" never appears as a verdict.
-- [ ] Every verdict shows an icon + text, and the grade legend appears on hover and keyboard focus.
+- [x] S07 and S15 match their screens.
+- [x] The word "safe" never appears as a verdict.
+- [x] Every verdict shows an icon + text, and the grade legend appears on hover and keyboard focus.
 
 Foundation (every build):
-- [ ] The build's screens match their reference images in layout and copy.
-- [ ] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
-- [ ] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
-- [ ] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
-- [ ] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
-- [ ] The footer disclaimer is visible; no project layer exists.
-- [ ] Stubbed actions show "Not connected yet" rather than failing silently.
-- [ ] Nothing from a later build is started early.
+- [x] The build's screens match their reference images in layout and copy.
+- [x] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
+- [x] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
+- [x] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
+- [x] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
+- [x] The footer disclaimer is visible; no project layer exists.
+- [x] Stubbed actions show "Not connected yet" rather than failing silently.
+- [x] Nothing from a later build is started early.
 
 ## Open questions
 None blocking. Doc-only: the image reuses RUN-2026-0918-0412 for both screens; S15's panel shows polymer SMILES fields for ALX-117 that Build 02's fixture has as `[PLACEHOLDER]`. The liability map and simulation card below the matrix are Builds 05–06.
@@ -69,7 +69,12 @@ Asked (2026-09-19):
 No product-rule issues: no "safe", counts are per verdict with no total, every verdict and warning is icon + text, one screen, the dossier is owner + workspace scoped and the novel rule is applied in `lib/data/`.
 
 ## Tests
-—
+2026-09-19 · **Checks run:** typecheck ✓ · lint ✓ · unit/component ✓ (164 passed, 19 files; 5 consecutive full runs + 1 under build load) · e2e ✓ (27 passed) · build ✓ · visual check ✓
+- Visual: S07, S15 and the S06 partial matrix against the reference at 1440, 1280 and 1024 (review); S15 panel after the polymer/1.0 fix. Differences by decision: placeholder sources on 14 rows; the image's Draw structure button (removed in Build 02); liability map and simulation below the matrix are Builds 05–06.
+- Keyboard: Tab reaches each row's sources toggle (Enter/Space expand, aria-expanded updates), then its grade badge (legend shows on focus, Esc hides it); focus visible throughout. No modals in this build.
+- Reduced motion: only `animate-reveal` is added, covered by the global reduced-motion rule verified in Build 03.
+- Done-when evidence: S07/S15 → `dossier.spec` + `dossier.test`; "safe" → `guards.test`, fixture test, e2e page check; icon + text and legend on hover/focus → `dossier.test` + `dossier.spec`; scoping → `dossier.test` (lib/data: other user, other workspace); mocks only in `lib/data` → `guards.test`; stubs unchanged from Build 03 (`run.test`, `shell.spec`).
+- Flaky tests fixed (not hidden): `inputPanel.test.tsx` timed out under full-suite load (whole-Screen tests take 1.5–4.5 s in jsdom) and its Load example test asserted the header before `startRun` resolved (a race since Build 03). Fixed the race and sized the file's timeout; assertions unchanged, and the last assertion now checks Run screen's call rather than Load example's.
 
 ## Log
 - 2026-09-19 — Loaded Build 04 · Dossier: verdict matrix. Dependencies 01 and 03 merged. Spec and image read (rows cropped at full resolution); 5 open questions.
@@ -78,3 +83,4 @@ No product-rule issues: no "safe", counts are per verdict with no total, every v
 - 2026-09-19 — Tasks 3–7: `DossierSection` owns the matrix with loading (skeleton), error (alert + "Try again") and loaded states; the novel banner sits above the matrix. Rows use a real `<table>` (row headers per endpoint, a hidden details row per endpoint for sources). Added a `size="sm"` Chip/VerdictChip variant for the header counts (they wrapped at 1440). Tests found that the count chips read "3Precedented" to assistive tech; a real space fixes it. `useDossier` derives its loading state (lint: no setState in effects). Dev S15 sends ALX-117 at 1.0 mg/mL with the polymer fields read from S15 (fixed after task 7). Build 03 e2e now waits for the matrix header instead of the removed hand-off text. Checks: typecheck ✓ · lint ✓ · unit 162 ✓ · e2e 26 ✓ · visual S07/S15/S06 at 1440 and S07 at 1024 ✓.
 - 2026-09-19 — Gaps fixed on request: dev S15 now sends ALX-117's polymer fields from the S15 panel (`ALX117_POLYMER`; the cut-off repeat-unit tail and PLGA DP stay `[PLACEHOLDER]`, not completed from chemistry). New `formatConc` shows whole-number concentrations with one decimal (1 → "1.0") in the header and the panel field, never rounding. Checks: typecheck ✓ · lint ✓ · unit 164 ✓ · dossier + inputs e2e 12 ✓ · visual S15 ✓.
 - 2026-09-19 — review: 2 medium + 1 low fixed, 4 low open (see Review). Checks after fixes: typecheck ✓ · lint ✓ · unit 164 ✓ · dossier e2e 6 ✓.
+- 2026-09-19 — test: all checks pass (164 unit, 27 e2e, build); keyboard pass done; all Done-when items ticked. Fixed the intermittent inputPanel failures (race + timeout). Status ready.

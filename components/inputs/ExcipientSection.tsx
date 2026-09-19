@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { lookupIdentity } from "@/app/actions/inputs";
 import { Field } from "@/components/ui/Field";
 import { Switch } from "@/components/ui/Switch";
@@ -29,6 +29,8 @@ function hintText(hint: IdentityHint): string {
 export function ExcipientSection() {
   const { draft, update, errors, identity, setIdentity } = useRunInput();
   const [looking, startLookup] = useTransition();
+  // The query a lookup failed for, so the hint says so instead of staying blank.
+  const [failedQuery, setFailedQuery] = useState<string | null>(null);
 
   // A hint only applies to the text it was looked up for.
   const hint = identity && identity.query === draft.query.trim() ? identity.hint : null;
@@ -38,7 +40,12 @@ export function ExcipientSection() {
     if (!query || identity?.query === query) return;
     startLookup(async () => {
       const result = await lookupIdentity({ query });
-      if (result.ok) setIdentity({ query, hint: result.data });
+      if (result.ok) {
+        setFailedQuery(null);
+        setIdentity({ query, hint: result.data });
+      } else {
+        setFailedQuery(query);
+      }
     });
   }
 
@@ -50,7 +57,15 @@ export function ExcipientSection() {
       <Field
         label="Name, CAS or SMILES"
         error={errors.query}
-        hint={looking ? "Looking up identity…" : hint ? hintText(hint) : undefined}
+        hint={
+          looking
+            ? "Looking up identity…"
+            : hint
+              ? hintText(hint)
+              : failedQuery === draft.query.trim()
+                ? "Couldn't look up this identity. It will be checked when the run starts."
+                : undefined
+        }
       >
         {(p) => (
           <TextInput

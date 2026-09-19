@@ -1,6 +1,6 @@
 # Current Build
 
-Status: in-progress
+Status: review
 Build: 02 · Inputs panel
 Spec: context/features/02-inputs.spec.md
 Image: context/screenshots/02-inputs.png
@@ -60,7 +60,17 @@ Asked (2026-09-19):
 **New dependencies:** none.
 
 ## Review
-—
+Reviewed 2026-09-19 against the spec (S03; S02 removed by decision), the image, foundation and standards; UI checked at 1440, 1280 and 1024. Product rules (no "safe", icon + text errors), session scoping of `lib/data/`, and build boundaries: no issues.
+- [medium] A stale chain lookup could overwrite a newer PDB ID (blur, then edit before the lookup returns): fixed, `update` takes a function and the result applies only if the ID is unchanged; reducer test.
+- [medium] "Check the N highlighted fields" counted errors hidden by switching protein tab or turning Polymer off: fixed, those errors clear with the switch/tab; reducer test.
+- [medium] Draft updates called `setErrors` from inside a state updater (impure, runs twice in dev): fixed, draft + errors now share one reducer (`formReducer`).
+- [low] A failed identity lookup left the hint blank: fixed, "Couldn't look up this identity. It will be checked when the run starts."
+- [low] Found in the task 9 visual check and fixed there: dose unit select squashed the input; tabs wrapped; selects clipped text.
+- [low] Required fields aren't marked (visually or `aria-required`): open (every field is required except polymer extras; revisit with Build 03's identity flow).
+- [low] Enter in a field doesn't run the screen (no `<form>`): open (Run is one Tab away; avoids accidental runs).
+- [low] Residual monomers typed without a space after the comma ("oxide,1,4-dioxane") stay one item: open (hint says "Separate with commas").
+- [low] Frequency (every 2 weeks) and dose unit (mg) have defaults the spec doesn't set: open (a select needs a value; both are visible).
+- [low] Runs started here aren't stored, so they don't appear in Recent runs: open (Phase 1, no persistence).
 
 ## Tests
 —
@@ -71,3 +81,4 @@ Asked (2026-09-19):
 - 2026-09-19 — Tasks 5–8 in one commit (sections share the draft provider). `RunInputProvider` holds draft/errors/identity; `loadExample` now returns `{example, structure, identity}` so one call fills the panel. Residual monomers split on commas not followed by a digit ("1,4-dioxane"). Unit addons are part of the input's description. Run shows "Check the N highlighted fields" (role=alert) and focuses the first invalid field. Created runs are not stored (Phase 1), so they don't appear in Recent runs.
 - 2026-09-19 — Interlude on main: pinned pnpm 10.34.5 for Vercel compatibility (`a0fdae7`), merged into this branch.
 - 2026-09-19 — Task 9: 11 component tests (`components/inputs/inputPanel.test.tsx`: defaults, mono, identity hint, polymer switch, errors + focus, typed startRun, chains, active tab only, server rejection, Load example, disabled) and 6 e2e (`tests/e2e/inputs.spec.ts`); Build 01's "Run screen stub" e2e now checks the Batch stub. Visual check at 1440/1024 found the dose unit select eating the input and tabs wrapping: fixed (fixed-width unit wrapper, select padding, nowrap tabs). All 9 tasks done. Checks: typecheck ✓ lint ✓ format ✓ unit 88/88 ✓ e2e 16/16 ✓. Next: `/feature review`.
+- 2026-09-19 — review: 3 medium + 1 low fixed (plus 1 low fixed in task 9), 5 low open. typecheck ✓ lint ✓ format ✓ unit 91/91 ✓ e2e 16/16 ✓. Status review.

@@ -57,11 +57,17 @@ function PdbTab() {
       const result = await lookupStructure({ pdbId });
       if (!result.ok) return;
       const structure = result.data;
-      update({
-        pdbId,
-        pdbChains: structure?.chains.map(({ id, label }) => ({ id, label })) ?? [],
-        excludedChains: structure?.chains.filter((c) => c.excludedByDefault).map((c) => c.id) ?? [],
-      });
+      // Apply only if the ID hasn't been edited while the lookup was in flight.
+      update((current) =>
+        current.pdbId.trim().toUpperCase() === pdbId
+          ? {
+              pdbId,
+              pdbChains: structure?.chains.map(({ id, label }) => ({ id, label })) ?? [],
+              excludedChains:
+                structure?.chains.filter((c) => c.excludedByDefault).map((c) => c.id) ?? [],
+            }
+          : {},
+      );
     });
   }
 

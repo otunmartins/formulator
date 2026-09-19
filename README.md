@@ -32,6 +32,10 @@ pnpm dev                           # http://localhost:3000
 | ----------- | ------- | ------------------------------------------------------------------- |
 | `USE_MOCKS` | `true`  | Server-only. Read only by `lib/data/`. Phase 1 supports only mocks. |
 
+## Deployment (Vercel)
+
+Vercel installs with pnpm 9 or 10 (it doesn't support newer pnpm), so the project stays on **pnpm 10** (`packageManager` in `package.json`) with a lockfile both versions read. Keep build-script approvals in `package.json` under `pnpm.onlyBuiltDependencies` rather than in a `pnpm-workspace.yaml`. No environment variables are required: `USE_MOCKS` defaults to `true`.
+
 ## Working on it
 
 Builds are done one spec at a time with the `/feature` workflow in Claude Code. Specs are in `context/features/`, reference images in `context/screenshots/`, and the active build is tracked in `context/current-feature.md`.

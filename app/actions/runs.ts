@@ -1,9 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { getExample, getRunSummary } from "@/lib/data/runs";
+import { createRun, getExample, getRunSummary } from "@/lib/data/runs";
 import { runIdSchema, type RunSummary } from "@/lib/types/domain";
-import type { Example } from "@/lib/types/runInput";
+import { runRequestSchema, type Example } from "@/lib/types/runInput";
 import { fail, ok, type ActionResult } from "@/lib/types/actions";
 
 const openRunInput = z.object({ runId: runIdSchema });
@@ -25,5 +25,16 @@ export async function loadExample(): Promise<ActionResult<Example>> {
   return ok(await getExample());
 }
 
-// TODO(build-03): startRun, resolveIdentity · TODO(build-06): startSimulation, cancelSimulation
+/**
+ * Starts a screen from the input panel. The input is validated again here; the client's
+ * validation is never trusted. TODO(build-03): progress polling for the returned run.
+ */
+export async function startRun(input: unknown): Promise<ActionResult<RunSummary>> {
+  const parsed = runRequestSchema.safeParse(input);
+  if (!parsed.success)
+    return fail("invalid_input", "Some inputs aren't valid. Check the highlighted fields.");
+  return ok(await createRun(parsed.data));
+}
+
+// TODO(build-03): resolveIdentity (override) · TODO(build-06): startSimulation, cancelSimulation
 // TODO(build-07): signOff, newVersion, exportDossier · TODO(build-08): askDossier

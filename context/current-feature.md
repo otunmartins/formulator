@@ -50,7 +50,7 @@ Asked (2026-09-19):
 - [x] 1. docs: record the Draw structure removal (02 spec: S02, task 2, Done-when; 01 spec S01 action; foundation component inventory, state model `modal`, builds table; overview) and the protein contract extension.
 - [x] 2. feat(types): run-input zod schema (excipient + polymer, 4 protein variants, context), draft ↔ typed conversion with field errors; extend the Example fixture with full inputs; unit tests.
 - [x] 3. feat(data): mock identities (PS80 by name/CAS, ALX-117) and structures (1N8Z chains A light, B heavy (Fab), C antigen excluded by default); session-scoped `lookupIdentity`, `lookupStructure`, `createRun` (mock run ID, not persisted); actions `lookupIdentity`, `lookupStructure`, `startRun`; unit tests incl. scoping and invalid input.
-- [ ] 4. feat(ui): form primitives: Field (label, hint, inline error wired via aria-describedby/aria-invalid), TextInput (mono option, unit addon), Select, Textarea, Switch (role=switch), FileDrop; component tests.
+- [x] 4. feat(ui): form primitives: Field (label, hint, inline error wired via aria-describedby/aria-invalid), TextInput (mono option, unit addon), Select, Textarea, Switch (role=switch), FileDrop; component tests.
 - [ ] 5. feat(inputs): Excipient field + on-blur identity hint; Polymer switch revealing repeat unit (mono), end groups, approx. DP, residual monomers.
 - [ ] 6. feat(inputs): Protein tabs: PDB ID + chain chips (toggle include/exclude), UniProt ID and Sequence (FASTA) with "predicted structure, grade C" note, Upload dropzone (.pdb/.cif/.mmcif, size check); only the active tab is kept for submit.
 - [ ] 7. feat(inputs): Context: route SC/IV/IM, dose + unit, frequency, excipient concentration (mg/mL), storage 4/25/40 °C.

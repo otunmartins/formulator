@@ -1,6 +1,9 @@
 // @vitest-environment node
+import { createCookieJar } from "@/tests/helpers/cookieJar";
 import { describe, expect, it, vi } from "vitest";
 
+const jar = createCookieJar();
+vi.mock("next/headers", () => ({ cookies: async () => jar.store }));
 vi.mock("@/lib/auth/session", () => ({
   getSession: async () => ({
     user: { id: "usr_motun", name: "M. Otun", initials: "MO" },

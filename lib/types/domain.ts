@@ -99,10 +99,3 @@ export const sessionUserSchema = z.object({
   initials: z.string(),
 });
 export type SessionUser = z.infer<typeof sessionUserSchema>;
-
-/** Run events as the polling route handler returns them (Build 03 replays real scripts). */
-export interface RunEvents {
-  runId: string;
-  steps: Steps;
-  done: boolean;
-}

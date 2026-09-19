@@ -52,7 +52,7 @@ Decided myself:
 
 **Tasks**
 - [x] 1. feat(mocks): event scripts and a pure `timelineAt(state, now)` → steps, run state, candidates, error; unit tests (pause, resume at Precedent, retry keeps completed steps).
-- [ ] 2. feat(data): httpOnly cookie run store (zod-validated, owner + workspace scoped, last 10 runs); `createRun` stores a run with its script; `getRunEvents` from the timeline; Recent runs / open run include stored runs; `resolveRunIdentity`, `retryRunStep`; unit tests incl. another user's cookie run not visible.
+- [x] 2. feat(data): httpOnly cookie run store (zod-validated, owner + workspace scoped, last 10 runs); `createRun` stores a run with its script; `getRunEvents` from the timeline; Recent runs / open run include stored runs; `resolveRunIdentity`, `retryRunStep`; unit tests incl. another user's cookie run not visible.
 - [ ] 3. feat(actions): script selection in `startRun`; `resolveIdentity` and `retryStep` actions (zod; CAS/SMILES check); events route returns the extended shape; dev-only `startDevRun` (S04/S05/S06, refused in production); tests.
 - [ ] 4. feat(run): `useRunEvents` polling hook into screen state; progress strip states with animated tick and spinner (reduced motion honoured); skeleton matrix with section reveal; Load example fills and starts.
 - [ ] 5. feat(run): S05 identity card (candidate radios, override field, "Use and continue", validation), run resumes at Precedent.
@@ -71,3 +71,4 @@ Decided myself:
 ## Log
 - 2026-09-19 — Loaded Build 03 · Run lifecycle. Dependencies 01 and 02 merged. Spec and image read; 4 open questions.
 - 2026-09-19 — start: 4 questions answered (see Decisions); plan written, 8 tasks. Status planned.
+- 2026-09-19 — Tasks 1–2: timeline is a pure function of start time + user actions (no timers or server memory). Cookie store keeps up to 6 runs, dropping the oldest to stay under 3600 chars (browser cookie limit ~4 KB). Run IDs come from the clock and skip IDs already stored (a per-instance counter isn't safe on serverless). Resolved runs keep "Complete" notes for later steps (only the identity note changes).

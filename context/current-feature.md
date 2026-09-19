@@ -1,6 +1,6 @@
 # Current Build
 
-Status: in-progress
+Status: review
 Build: 03 · Run lifecycle
 Spec: context/features/03-run-lifecycle.spec.md
 Image: context/screenshots/03-run-lifecycle.png
@@ -63,7 +63,16 @@ Decided myself:
 **New dependencies:** none.
 
 ## Review
-—
+2026-09-19 · diff `main...HEAD` against the product rules, spec, foundation, S04–S06 at 1440/1280/1024 and the coding standards.
+- **Medium** · At 1024 px, step status notes were cut off ("Needs your in…", "Failed · HTTP …"), so the status text itself was lost. **Fixed**: notes wrap to 2 lines below 1181 px, 1 line on desktop, full text in `title`.
+- **Medium** · Focus dropped to `<body>` when "Use and continue" or "Retry" removed the focused control. **Fixed**: focus moves to the progress strip (`tabIndex=-1`); e2e asserts it.
+- **Medium** · Skeleton rows pulsed: motion beyond progress ticks and section reveal (foundation hard rule). **Fixed**: static skeleton.
+- **Low** · Banner copy differed from S06 ("Completed results below are kept"). **Fixed**: "Precedent results below are complete." (the step before the failed one).
+- **Low** · Polling kept retrying on 4xx responses other than 404. **Fixed**: stops with an error notice; 5xx and network errors keep polling.
+- **Low** · Opening a completed run shows the skeleton ("step 1 of 4") for one poll (~100 ms) before the hand-off card. **Open** (cosmetic; Build 04 replaces this area with the dossier read).
+- **Low** · The disabled "Run manifest" link reads close to enabled text. **Open** (Build 01 styling; Build 07 enables it).
+- **Low** · S06 matrix header chips (counts per verdict) and rows aren't shown. **Open** (Build 04 by decision; hand-off card marks the spot).
+No product-rule issues: no "safe", no score, every status is icon + text, one screen, all run lookups owner + workspace scoped, dev action refused in production.
 
 ## Tests
 —
@@ -74,3 +83,4 @@ Decided myself:
 - 2026-09-19 — Tasks 1–2: timeline is a pure function of start time + user actions (no timers or server memory). Cookie store keeps up to 6 runs, dropping the oldest to stay under 3600 chars (browser cookie limit ~4 KB). Run IDs come from the clock and skip IDs already stored (a per-instance counter isn't safe on serverless). Resolved runs keep "Complete" notes for later steps (only the identity note changes).
 - 2026-09-19 — Task 3: overrides are checked on the server: CAS numbers must have a valid check digit, SMILES get a loose shape check (allowed characters, balanced brackets; real parsing is phase 2). `startRun` calls `refresh()` so the run appears in Recent runs. The guard test caught the dev action importing `lib/mocks`; the backdating moved into `lib/data` (`createDevRun`).
 - 2026-09-19 — Tasks 4–8: `RunArea` owns the strip and what sits under it (empty card, skeleton, identity card, error banner + precedent-only hand-off, complete hand-off). Load example and Run share `useStartRun`; Load example no longer sets the header itself (the started run does). Sign off enables only on complete (stub); exports/share enable on complete or partial (stub); Run manifest stays disabled (Build 07). Tablet (≤1180 px) collapses the panel when a completed run arrives, including opening a completed run. Truncated step notes carry a `title`. Checks: typecheck ✓ · lint ✓ · unit 132 ✓ · e2e 21 ✓ · visual S04/S05/S06 at 1440 ✓.
+- 2026-09-19 — review: 3 medium + 2 low fixed, 3 low open (see Review). Checks after fixes: typecheck ✓ · lint ✓ · unit 132 ✓ · e2e 21 ✓.

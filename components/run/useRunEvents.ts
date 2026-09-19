@@ -34,6 +34,11 @@ export function useRunEvents() {
           notify("This run is no longer available in your workspace.", "error");
           return;
         }
+        // Other client errors won't fix themselves; server errors may, so keep polling those.
+        if (response.status >= 400 && response.status < 500) {
+          notify("Progress for this run couldn't be loaded.", "error");
+          return;
+        }
         if (response.ok) {
           const events = (await response.json()) as RunEvents;
           if (cancelled) return;

@@ -52,6 +52,14 @@ const STATUS: Record<StepStatus, StatusStyle> = {
   },
 };
 
+/** The strip's id: focus moves here when the card or banner the user acted on goes away. */
+export const PROGRESS_STRIP_ID = "run-progress";
+
+/** Keeps focus in place after "Use and continue" or "Retry" removes the focused control. */
+export function focusProgressStrip() {
+  requestAnimationFrame(() => document.getElementById(PROGRESS_STRIP_ID)?.focus());
+}
+
 export interface ProgressStripProps {
   /** Null before a run starts: every step shows as waiting. */
   steps: Steps | null;
@@ -60,7 +68,13 @@ export interface ProgressStripProps {
 /** The four run steps, each as icon + text (never colour alone), announced as they change. */
 export function ProgressStrip({ steps }: ProgressStripProps) {
   return (
-    <ol aria-label="Run progress" aria-live="polite" className="mb-5 grid grid-cols-4 gap-3">
+    <ol
+      id={PROGRESS_STRIP_ID}
+      tabIndex={-1}
+      aria-label="Run progress"
+      aria-live="polite"
+      className="mb-5 grid grid-cols-4 gap-3"
+    >
       {stepKeys.map((key, index) => {
         const step = steps?.[key] ?? { status: "pending" as const, note: "Waiting" };
         const style = STATUS[step.status];
@@ -76,7 +90,10 @@ export function ProgressStrip({ steps }: ProgressStripProps) {
               <span className="block text-[13px] leading-snug font-semibold">
                 {index + 1}. {STEP_TITLES[key]}
               </span>
-              <span className="block truncate text-xs text-muted" title={note}>
+              <span
+                className="line-clamp-2 text-xs break-words text-muted desk:line-clamp-1"
+                title={note}
+              >
                 {note !== style.label && <span className="sr-only">{style.label}: </span>}
                 {note}
               </span>

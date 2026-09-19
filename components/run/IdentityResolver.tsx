@@ -10,6 +10,7 @@ import { TextInput } from "@/components/ui/TextInput";
 import { useScreen } from "@/components/shell/screenState";
 import type { IdentityCandidate } from "@/lib/types/runEvents";
 import { overrideFormat } from "@/lib/utils/identifiers";
+import { focusProgressStrip } from "./ProgressStrip";
 
 export interface IdentityResolverProps {
   runId: string;
@@ -53,8 +54,12 @@ export function IdentityResolver({ runId, query, candidates }: IdentityResolverP
     setError(null);
     startTransition(async () => {
       const result = await resolveIdentity({ runId, choice });
-      if (result.ok) dispatch({ type: "runResumed", events: result.data });
-      else setError(result.error.message);
+      if (result.ok) {
+        dispatch({ type: "runResumed", events: result.data });
+        focusProgressStrip();
+      } else {
+        setError(result.error.message);
+      }
     });
   }
 

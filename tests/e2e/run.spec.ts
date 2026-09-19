@@ -61,6 +61,7 @@ test("S05: an unresolved identity pauses the run; an override resumes it at Prec
   await override.fill("9005-65-6");
   await card.getByRole("button", { name: "Use and continue" }).click();
   await expect(card).toBeHidden();
+  await expect(strip(page)).toBeFocused();
   await expect(step(page, 0)).toContainText("Override · CAS 9005-65-6");
   await expect(step(page, 1)).toContainText("Running");
   await expect(page.getByText("All steps complete")).toBeVisible({ timeout: RUN_MS });
@@ -72,6 +73,7 @@ test("S06: a failed step shows the banner; retry keeps completed steps", async (
   const banner = page.getByRole("alert").filter({ hasText: "Hazard step failed" });
   await expect(banner).toBeVisible({ timeout: RUN_MS });
   await expect(banner).toContainText("PubChem hazard lookup timed out (HTTP 504, 3 attempts)");
+  await expect(banner).toContainText("Precedent results below are complete.");
   await expect(step(page, 2)).toContainText("Failed · HTTP 504");
   await expect(page.getByText("Precedent endpoints only · hazard step failed")).toBeVisible();
   await expect(signOff(page)).toBeDisabled();
@@ -79,6 +81,8 @@ test("S06: a failed step shows the banner; retry keeps completed steps", async (
 
   await banner.getByRole("button", { name: "Retry hazard step" }).click();
   await expect(banner).toBeHidden();
+  // Focus doesn't fall to the page when the banner goes.
+  await expect(strip(page)).toBeFocused();
   // Only the failed step runs again; Identity and Precedent stay done.
   await expect(step(page, 2)).toContainText("Running");
   await expect(step(page, 0)).toContainText("Polysorbate 20 · CAS");

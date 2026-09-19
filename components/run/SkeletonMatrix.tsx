@@ -19,7 +19,7 @@ export function SkeletonMatrix({ step }: SkeletonMatrixProps) {
       </div>
       <div aria-hidden="true" className="space-y-5 px-6 py-6">
         {ROWS.map((basisWidth, i) => (
-          <div key={i} className="grid animate-pulse grid-cols-[1.4fr_1.6fr_2.25rem_5fr] gap-4">
+          <div key={i} className="grid grid-cols-[1.4fr_1.6fr_2.25rem_5fr] gap-4">
             <span className="h-3.5 rounded-full bg-bg" />
             <span className="h-5 rounded-full bg-bg" />
             <span className="h-5 rounded-control bg-bg" />

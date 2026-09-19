@@ -205,6 +205,7 @@ describe("StepErrorBanner", () => {
     const banner = screen.getByRole("alert");
     expect(banner).toHaveTextContent("Hazard step failed");
     expect(banner).toHaveTextContent("PubChem hazard lookup timed out (HTTP 504, 3 attempts)");
+    expect(banner).toHaveTextContent("Precedent results below are complete.");
     await user.click(screen.getByRole("button", { name: "Retry hazard step" }));
     expect(retryStep).toHaveBeenCalledWith({ runId: RUN_ID, step: "hazard" });
     expect(dispatch).toHaveBeenCalledWith({ type: "runResumed", events: resumed });

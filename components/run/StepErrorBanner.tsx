@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useNotice } from "@/components/ui/Notice";
 import { useScreen } from "@/components/shell/screenState";
+import { stepKeys } from "@/lib/types/domain";
 import type { StepFailure } from "@/lib/types/runEvents";
-import { STEP_TITLES } from "./ProgressStrip";
+import { focusProgressStrip, STEP_TITLES } from "./ProgressStrip";
 
 export interface StepErrorBannerProps {
   runId: string;
@@ -20,12 +21,21 @@ export function StepErrorBanner({ runId, failure }: StepErrorBannerProps) {
   const notify = useNotice();
   const [pending, startTransition] = useTransition();
   const title = STEP_TITLES[failure.step];
+  // The step before the failed one is the last that completed (S06: "Precedent results…").
+  const previous = stepKeys[stepKeys.indexOf(failure.step) - 1];
+  const kept = previous
+    ? `${STEP_TITLES[previous]} results below are complete.`
+    : "No steps completed.";
 
   function onRetry() {
     startTransition(async () => {
       const result = await retryStep({ runId, step: failure.step });
-      if (result.ok) dispatch({ type: "runResumed", events: result.data });
-      else notify(result.error.message, "error");
+      if (result.ok) {
+        dispatch({ type: "runResumed", events: result.data });
+        focusProgressStrip();
+      } else {
+        notify(result.error.message, "error");
+      }
     });
   }
 
@@ -38,8 +48,8 @@ export function StepErrorBanner({ runId, failure }: StepErrorBannerProps) {
       <div className="min-w-0 flex-1 text-[13px]">
         <p className="font-semibold text-alert-text">{title} step failed</p>
         <p className="mt-0.5">
-          {failure.reason} (<span className="font-mono text-xs">{failure.detail}</span>). Completed
-          results below are kept. {title} endpoints and the liability map are not shown.
+          {failure.reason} (<span className="font-mono text-xs">{failure.detail}</span>). {kept}{" "}
+          {title} endpoints and the liability map are not shown.
         </p>
       </div>
       <Button size="sm" onClick={onRetry} disabled={pending}>

@@ -10,6 +10,8 @@ export interface ChipProps {
   tone?: ChipTone;
   /** Mono text for IDs and versions. */
   mono?: boolean;
+  /** "sm" for dense summaries such as the verdict counts in a card header. */
+  size?: "md" | "sm";
   className?: string;
 }
 
@@ -20,17 +22,25 @@ const TONES: Record<ChipTone, string> = {
 };
 
 /** Small status label. Always carries text; the icon is decorative. */
-export function Chip({ children, icon, tone = "neutral", mono, className }: ChipProps) {
+export function Chip({
+  children,
+  icon,
+  tone = "neutral",
+  mono,
+  size = "md",
+  className,
+}: ChipProps) {
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center gap-1 rounded-chip border px-2.5 text-xs font-medium whitespace-nowrap",
+        "inline-flex items-center gap-1 rounded-chip border font-medium whitespace-nowrap",
+        size === "md" ? "h-6 px-2.5 text-xs" : "h-5 px-2 text-[11px]",
         mono && "font-mono",
         TONES[tone],
         className,
       )}
     >
-      {icon && <Icon name={icon} className="size-3.5" />}
+      {icon && <Icon name={icon} className={size === "md" ? "size-3.5" : "size-3"} />}
       {children}
     </span>
   );

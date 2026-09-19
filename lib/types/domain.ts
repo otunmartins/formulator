@@ -49,19 +49,34 @@ export type Review = z.infer<typeof reviewSchema>;
 
 export const runIdSchema = z.string().regex(/^RUN-\d{4}-\d{4}-\d{4}$/);
 
-/** What the shell needs to list a run and fill the run header. */
+/** What the shell needs to list a run and fill the run header. Owner fields stay server-side. */
 export const runSummarySchema = z.object({
   runId: runIdSchema,
   kind: z.enum(["single", "batch"]),
   title: z.string(),
   /** Null for batch runs, whose rows can differ in route. */
+  route: routeSchema.nullable(),
+  /** Null when the fixture doesn't carry the full context (shown as a visible placeholder). */
   context: runContextSchema.nullable(),
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
   review: reviewSchema,
+});
+export type RunSummary = z.infer<typeof runSummarySchema>;
+
+/** A stored run record: the summary plus its owner and workspace (data contract). */
+export const runRecordSchema = runSummarySchema.extend({
   ownerId: z.string(),
   workspaceId: z.string(),
 });
-export type RunSummary = z.infer<typeof runSummarySchema>;
+export type RunRecord = z.infer<typeof runRecordSchema>;
+
+/** A starting point for a new screen (the "Load example" button). Not a run; has no owner. */
+export const exampleSchema = z.object({
+  title: z.string(),
+  route: routeSchema,
+  context: runContextSchema,
+});
+export type Example = z.infer<typeof exampleSchema>;
 
 export const workspaceSchema = z.object({
   id: z.string(),
@@ -76,3 +91,10 @@ export const sessionUserSchema = z.object({
   initials: z.string(),
 });
 export type SessionUser = z.infer<typeof sessionUserSchema>;
+
+/** Run events as the polling route handler returns them (Build 03 replays real scripts). */
+export interface RunEvents {
+  runId: string;
+  steps: Steps;
+  done: boolean;
+}

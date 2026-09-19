@@ -51,7 +51,7 @@ export function Tabs<T extends string>({
         ref={listRef}
         role="tablist"
         aria-label={label}
-        className="flex gap-1 border-b border-border"
+        className="flex gap-0.5 overflow-x-auto border-b border-border"
       >
         {tabs.map((tab) => {
           const selected = tab.id === value;
@@ -67,7 +67,7 @@ export function Tabs<T extends string>({
               onClick={() => onChange(tab.id)}
               onKeyDown={onKeyDown}
               className={cn(
-                "-mb-px border-b-2 px-3 py-2 text-[13px] transition-colors",
+                "-mb-px shrink-0 border-b-2 px-2.5 py-2 text-[13px] whitespace-nowrap transition-colors",
                 selected
                   ? "border-accent font-medium text-text"
                   : "border-transparent text-muted hover:text-text",

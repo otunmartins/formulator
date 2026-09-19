@@ -1,8 +1,10 @@
 "use server";
 
 import { z } from "zod";
+import { lookupIdentity, lookupStructure } from "@/lib/data/inputs";
 import { createRun, getExample, getRunSummary } from "@/lib/data/runs";
 import { runIdSchema, type RunSummary } from "@/lib/types/domain";
+import type { IdentityHint, StructureInfo } from "@/lib/types/lookups";
 import { runRequestSchema, type Example } from "@/lib/types/runInput";
 import { fail, ok, type ActionResult } from "@/lib/types/actions";
 
@@ -20,9 +22,22 @@ export async function openRun(input: unknown): Promise<ActionResult<RunSummary>>
   return ok(run);
 }
 
-/** The "Load example" template. TODO(build-03): start a run from it. */
-export async function loadExample(): Promise<ActionResult<Example>> {
-  return ok(await getExample());
+export interface LoadedExample {
+  example: Example;
+  /** The example protein's structure, so the chain chips can be shown straight away. */
+  structure: StructureInfo | null;
+  identity: IdentityHint;
+}
+
+/** The "Load example" template: fills the input panel and the run header. */
+export async function loadExample(): Promise<ActionResult<LoadedExample>> {
+  const example = await getExample();
+  const { protein, excipient } = example.input;
+  const [structure, identity] = await Promise.all([
+    protein.source === "pdb" ? lookupStructure(protein.id) : Promise.resolve(null),
+    lookupIdentity(excipient.query),
+  ]);
+  return ok({ example, structure, identity });
 }
 
 /**

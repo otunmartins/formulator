@@ -51,10 +51,10 @@ Asked (2026-09-19):
 - [x] 2. feat(types): run-input zod schema (excipient + polymer, 4 protein variants, context), draft ↔ typed conversion with field errors; extend the Example fixture with full inputs; unit tests.
 - [x] 3. feat(data): mock identities (PS80 by name/CAS, ALX-117) and structures (1N8Z chains A light, B heavy (Fab), C antigen excluded by default); session-scoped `lookupIdentity`, `lookupStructure`, `createRun` (mock run ID, not persisted); actions `lookupIdentity`, `lookupStructure`, `startRun`; unit tests incl. scoping and invalid input.
 - [x] 4. feat(ui): form primitives: Field (label, hint, inline error wired via aria-describedby/aria-invalid), TextInput (mono option, unit addon), Select, Textarea, Switch (role=switch), FileDrop; component tests.
-- [ ] 5. feat(inputs): Excipient field + on-blur identity hint; Polymer switch revealing repeat unit (mono), end groups, approx. DP, residual monomers.
-- [ ] 6. feat(inputs): Protein tabs: PDB ID + chain chips (toggle include/exclude), UniProt ID and Sequence (FASTA) with "predicted structure, grade C" note, Upload dropzone (.pdb/.cif/.mmcif, size check); only the active tab is kept for submit.
-- [ ] 7. feat(inputs): Context: route SC/IV/IM, dose + unit, frequency, excipient concentration (mg/mL), storage 4/25/40 °C.
-- [ ] 8. feat(inputs): Run validates, shows inline errors (focus first invalid field), calls `startRun`, fills the header; `disabled` puts the panel in a disabled fieldset (TODO(build-07)); Load example fills the panel.
+- [x] 5. feat(inputs): Excipient field + on-blur identity hint; Polymer switch revealing repeat unit (mono), end groups, approx. DP, residual monomers.
+- [x] 6. feat(inputs): Protein tabs: PDB ID + chain chips (toggle include/exclude), UniProt ID and Sequence (FASTA) with "predicted structure, grade C" note, Upload dropzone (.pdb/.cif/.mmcif, size check); only the active tab is kept for submit.
+- [x] 7. feat(inputs): Context: route SC/IV/IM, dose + unit, frequency, excipient concentration (mg/mL), storage 4/25/40 °C.
+- [x] 8. feat(inputs): Run validates, shows inline errors (focus first invalid field), calls `startRun`, fills the header; `disabled` puts the panel in a disabled fieldset (TODO(build-07)); Load example fills the panel.
 - [ ] 9. test: component tests (tabs, polymer switch, active-tab-only submit, errors) + e2e (fill and run, Load example fills panel, keyboard); update Build 01 e2e for the new Run behaviour.
 
 **New dependencies:** none.
@@ -68,3 +68,4 @@ Asked (2026-09-19):
 ## Log
 - 2026-09-19 — Loaded Build 02 · Inputs panel. Dependency 01 merged. Spec and image read; 6 open questions.
 - 2026-09-19 — start: 6 questions answered (Draw structure removed; see Decisions); read Next forms guide; plan written, 9 tasks. Status planned.
+- 2026-09-19 — Tasks 5–8 in one commit (sections share the draft provider). `RunInputProvider` holds draft/errors/identity; `loadExample` now returns `{example, structure, identity}` so one call fills the panel. Residual monomers split on commas not followed by a digit ("1,4-dioxane"). Unit addons are part of the input's description. Run shows "Check the N highlighted fields" (role=alert) and focuses the first invalid field. Created runs are not stored (Phase 1), so they don't appear in Recent runs.

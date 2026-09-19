@@ -15,6 +15,8 @@ export interface FileDropProps {
   disabled?: boolean;
   "aria-invalid"?: boolean;
   "aria-describedby"?: string;
+  /** Lets a form find and focus the input (e.g. the first invalid field). */
+  "data-field"?: string;
 }
 
 /**
@@ -28,7 +30,7 @@ export function FileDrop({
   fileName,
   onFile,
   disabled,
-  ...aria
+  ...inputProps
 }: FileDropProps) {
   const [dragging, setDragging] = useState(false);
 
@@ -51,7 +53,7 @@ export function FileDrop({
       className={cn(
         "flex cursor-pointer flex-col items-center gap-1.5 rounded-card border border-dashed px-4 py-6 text-center focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
         dragging ? "border-accent bg-accent-soft" : "border-border-strong bg-surface-subtle",
-        aria["aria-invalid"] && "border-alert-text",
+        inputProps["aria-invalid"] && "border-alert-text",
         disabled && "cursor-not-allowed opacity-60",
       )}
     >
@@ -72,7 +74,7 @@ export function FileDrop({
           const file = e.target.files?.[0];
           if (file) onFile(file);
         }}
-        {...aria}
+        {...inputProps}
       />
     </label>
   );

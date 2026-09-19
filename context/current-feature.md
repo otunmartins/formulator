@@ -49,10 +49,10 @@ Asked (2026-09-19):
 **Tasks**
 - [x] 1. feat(types): `Endpoint`/`Source`/`Dossier` zod schemas with `step`; PS80 and ALX-117 fixtures from the image (placeholder sources where none shown); pure `applyNovelRule` and `verdictCounts`; unit tests (novel rule suppresses prec/supp, counts, no "safe"). Foundation contract gets `step`.
 - [x] 2. feat(data): stored runs record their endpoint set (`ps80` / `alx117` / none) at start and on identity resolve; ALX-117 step notes from S15; `getDossier` with partial filtering and the novel rule; dossier route; unit tests incl. another user's run → 404 and partial = 3 precedent rows.
-- [ ] 3. feat(dossier): screen state `dossier` + `selectedEndpointIds`; `useDossier` fetch when a run settles with results; VerdictMatrix header with per-verdict counts (zeros shown) and "No overall score"; rows with verdict chip, grade badge, basis, OOD warning; replaces `MatrixHandoff`.
-- [ ] 4. feat(dossier): expandable rows (chevron, aria-expanded, aria-controls) with SourceList; placeholder row for excipients without a fixture.
-- [ ] 5. feat(dossier): NovelBanner and S15; partial mode under the S06 banner (header note kept).
-- [ ] 6. feat(dev): switcher S07 and S15 (completed backdated runs).
+- [x] 3. feat(dossier): screen state `dossier` + `selectedEndpointIds`; `useDossier` fetch when a run settles with results; VerdictMatrix header with per-verdict counts (zeros shown) and "No overall score"; rows with verdict chip, grade badge, basis, OOD warning; replaces `MatrixHandoff`.
+- [x] 4. feat(dossier): expandable rows (chevron, aria-expanded, aria-controls) with SourceList; placeholder row for excipients without a fixture.
+- [x] 5. feat(dossier): NovelBanner and S15; partial mode under the S06 banner (header note kept).
+- [x] 6. feat(dev): switcher S07 and S15 (completed backdated runs).
 - [ ] 7. test: component tests (counts, expand/collapse keyboard, legend on focus, OOD, novel banner, placeholder, partial) + e2e (S07 happy path, S15 via ALX-117, S06 partial shows 3 rows); guard test that no verdict label or fixture says "safe"; earlier tests green.
 
 **New dependencies:** none.

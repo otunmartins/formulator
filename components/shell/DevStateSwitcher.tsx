@@ -14,10 +14,12 @@ const STATES: readonly { id: DevState; label: string }[] = [
   { id: "S04", label: "Run in progress" },
   { id: "S05", label: "Identity unresolved" },
   { id: "S06", label: "Step error" },
+  { id: "S07", label: "Run complete: verdict matrix" },
+  { id: "S15", label: "Novel excipient for this route" },
 ];
 
 /** States that need a run: the server starts a backdated mock run that lands on them. */
-const RUN_STATES = new Set<DevState>(["S04", "S05", "S06"]);
+const RUN_STATES = new Set<DevState>(["S04", "S05", "S06", "S07", "S15"]);
 
 /**
  * Dev-only jump to each reference screen for review. Not rendered in production builds.

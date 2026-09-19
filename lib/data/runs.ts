@@ -248,28 +248,35 @@ export async function retryRunStep(
   return timelineAt(retried, now);
 }
 
-export type DevRunState = "S04" | "S05" | "S06";
+export type DevRunState = "S04" | "S05" | "S06" | "S07" | "S15";
 
 /**
  * Dev state switcher only: starts the example run backdated so it lands on a reference screen
- * (S04 mid-hazard, S05 paused at identity, S06 failed at hazard). Returns the request too, so
+ * (S04 mid-hazard, S05 paused at identity, S06 failed at hazard, S07 and S15 complete). Returns the request too, so
  * the panel can show the inputs that produced it.
  */
 export async function createDevRun(
   state: DevRunState,
 ): Promise<{ run: RunSummary; request: RunRequest }> {
   const example = (await getExample()).input;
-  const { identity: I, precedent: P, hazard: H } = STEP_MS;
+  const { identity: I, precedent: P, hazard: H, liability: L } = STEP_MS;
   const setup = {
     S04: { query: example.excipient.query, backdate: I + P + H / 2 },
     S05: { query: "Tween 80 HP-K", backdate: I + 100 },
     // S06's reference shows PS80 with its precedent rows kept after the hazard failure.
     S06: { query: example.excipient.query, backdate: I + P + H + 100 },
+    S07: { query: example.excipient.query, backdate: I + P + H + L + 100 },
+    S15: { query: "ALX-117", backdate: I + P + H + L + 100 },
   }[state];
-  const request: RunRequest = {
-    ...example,
-    excipient: { ...example.excipient, query: setup.query },
-  };
+  const request: RunRequest =
+    state === "S15"
+      ? {
+          ...example,
+          // S15: ALX-117 at 1.0 mg/mL. Its polymer fields in the image are cut off, so none are sent.
+          excipient: { query: setup.query, polymer: null },
+          context: { ...example.context, conc_mg_mL: 1 },
+        }
+      : { ...example, excipient: { ...example.excipient, query: setup.query } };
   const startedAt = new Date(Date.now() - setup.backdate);
   const run = await insertRun(request, startedAt, state === "S06" ? "hazard_fail" : undefined);
   return { run, request };

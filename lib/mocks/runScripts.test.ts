@@ -25,6 +25,7 @@ function run(overrides: Partial<StoredRun> = {}): StoredRun {
       liability: "4 sites on 1N8Z",
     },
     startedAt: T0,
+    endpointSet: "ps80",
     retries: [],
     ...overrides,
   };

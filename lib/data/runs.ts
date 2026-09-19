@@ -1,7 +1,9 @@
 import "server-only";
 import { getSession } from "@/lib/auth/session";
-import { EXAMPLE, RUNS } from "@/lib/mocks/runs";
+import { endpointSetFor } from "@/lib/mocks/endpoints";
+import { ALX117_POLYMER, EXAMPLE, RUNS } from "@/lib/mocks/runs";
 import {
+  ALX117_1N8Z_NOTES,
   candidatesFor,
   HAZARD_FAIL_TRIGGER,
   PS80_1N8Z_NOTES,
@@ -92,6 +94,11 @@ const COMPLETE = "Complete";
  * TODO(phase-2): insert Run + Job rows for the worker instead.
  */
 export async function createRun(request: RunRequest, now = new Date()): Promise<RunSummary> {
+  return insertRun(request, now);
+}
+
+/** `forced` lets the dev switcher put a known excipient on another script (S06 with PS80). */
+async function insertRun(request: RunRequest, now: Date, forced?: RunScript): Promise<RunSummary> {
   const session = await getSession();
   dataSource();
   const query = request.excipient.query.trim();
@@ -114,14 +121,21 @@ export async function createRun(request: RunRequest, now = new Date()): Promise<
     name = identity.name;
     identityNote = `${identity.name} · user SMILES`;
   }
-  const isPs80On1N8Z =
-    identity.status === "resolved" &&
-    identity.name === "Polysorbate 80" &&
-    request.protein.source === "pdb" &&
-    request.protein.id === "1N8Z";
-  const later = isPs80On1N8Z
-    ? PS80_1N8Z_NOTES
-    : { precedent: COMPLETE, hazard: COMPLETE, liability: COMPLETE };
+  if (forced) script = forced;
+  const endpointSet =
+    name === "Polysorbate 20" || identity.status === "no_match"
+      ? null
+      : endpointSetFor(identity.status === "resolved" ? identity : { name: identity.name });
+  const on1N8Z = request.protein.source === "pdb" && request.protein.id === "1N8Z";
+  let later: Omit<StoredRun["notes"], "identity"> = {
+    precedent: COMPLETE,
+    hazard: COMPLETE,
+    liability: COMPLETE,
+  };
+  if (on1N8Z && endpointSet === "ps80") later = PS80_1N8Z_NOTES;
+  if (on1N8Z && endpointSet === "alx117") {
+    ({ identity: identityNote, ...later } = ALX117_1N8Z_NOTES);
+  }
 
   const taken = new Set((await listStoredRuns()).map((r) => r.runId));
   const run: StoredRun = {
@@ -138,6 +152,7 @@ export async function createRun(request: RunRequest, now = new Date()): Promise<
     query,
     notes: { identity: identityNote, ...later },
     startedAt: now.getTime(),
+    endpointSet,
     retries: [],
   };
   await saveStoredRun(run);
@@ -155,16 +170,23 @@ function fixtureAsStored(record: RunRecord): StoredRun {
       ? { identity: "Polysorbate 80 · CAS 9005-65-6", ...PS80_1N8Z_NOTES }
       : { identity: COMPLETE, precedent: COMPLETE, hazard: COMPLETE, liability: COMPLETE },
     startedAt: 0,
+    endpointSet: ps80 ? "ps80" : null,
     retries: [],
   };
 }
 
+/** One of the user's runs in the active workspace (started here or a fixture), or null. */
+export async function findScopedRun(runId: string): Promise<StoredRun | null> {
+  const stored = await findStoredRun(runId);
+  if (stored) return stored;
+  const fixture = (await scopedFixtureRuns()).find((r) => r.runId === runId);
+  return fixture ? fixtureAsStored(fixture) : null;
+}
+
 /** Progress for one of the user's runs, as the polling route handler returns it. */
 export async function getRunEvents(runId: string, now = Date.now()): Promise<RunEvents | null> {
-  const stored = await findStoredRun(runId);
-  if (stored) return timelineAt(stored, now);
-  const fixture = (await scopedFixtureRuns()).find((r) => r.runId === runId);
-  return fixture ? timelineAt(fixtureAsStored(fixture), now) : null;
+  const run = await findScopedRun(runId);
+  return run ? timelineAt(run, now) : null;
 }
 
 export type IdentityChoice =
@@ -189,17 +211,21 @@ export async function resolveRunIdentity(
 
   let value: string;
   let note: string;
+  let endpointSet: StoredRun["endpointSet"] = null;
   if (choice.kind === "candidate") {
     const candidate = candidatesFor(run.query).find((c) => c.id === choice.candidateId);
     if (!candidate) return "unknown_candidate";
     value = candidate.id;
     note = `${candidate.name} · CAS ${candidate.cas}`;
+    endpointSet = endpointSetFor({ cas: candidate.cas });
   } else {
     value = choice.value;
     note = choice.format === "cas" ? `Override · CAS ${choice.value}` : "Override · SMILES";
+    if (choice.format === "cas") endpointSet = endpointSetFor({ cas: choice.value });
   }
   const resolved: StoredRun = {
     ...run,
+    endpointSet,
     notes: { ...run.notes, identity: note },
     resolution: { at: now, kind: choice.kind, value, note, by: session.user.name },
   };
@@ -222,28 +248,37 @@ export async function retryRunStep(
   return timelineAt(retried, now);
 }
 
-export type DevRunState = "S04" | "S05" | "S06";
+export type DevRunState = "S04" | "S05" | "S06" | "S07" | "S15";
 
 /**
  * Dev state switcher only: starts the example run backdated so it lands on a reference screen
- * (S04 mid-hazard, S05 paused at identity, S06 failed at hazard). Returns the request too, so
+ * (S04 mid-hazard, S05 paused at identity, S06 failed at hazard, S07 and S15 complete). Returns the request too, so
  * the panel can show the inputs that produced it.
  */
 export async function createDevRun(
   state: DevRunState,
 ): Promise<{ run: RunSummary; request: RunRequest }> {
   const example = (await getExample()).input;
-  const { identity: I, precedent: P, hazard: H } = STEP_MS;
+  const { identity: I, precedent: P, hazard: H, liability: L } = STEP_MS;
   const setup = {
     S04: { query: example.excipient.query, backdate: I + P + H / 2 },
     S05: { query: "Tween 80 HP-K", backdate: I + 100 },
-    S06: { query: "Polysorbate 20", backdate: I + P + H + 100 },
+    // S06's reference shows PS80 with its precedent rows kept after the hazard failure.
+    S06: { query: example.excipient.query, backdate: I + P + H + 100 },
+    S07: { query: example.excipient.query, backdate: I + P + H + L + 100 },
+    S15: { query: "ALX-117", backdate: I + P + H + L + 100 },
   }[state];
-  const request: RunRequest = {
-    ...example,
-    excipient: { ...example.excipient, query: setup.query },
-  };
-  const run = await createRun(request, new Date(Date.now() - setup.backdate));
+  const request: RunRequest =
+    state === "S15"
+      ? {
+          ...example,
+          // S15: ALX-117 at 1.0 mg/mL with the polymer fields from its input panel.
+          excipient: { query: setup.query, polymer: ALX117_POLYMER },
+          context: { ...example.context, conc_mg_mL: 1 },
+        }
+      : { ...example, excipient: { ...example.excipient, query: setup.query } };
+  const startedAt = new Date(Date.now() - setup.backdate);
+  const run = await insertRun(request, startedAt, state === "S06" ? "hazard_fail" : undefined);
   return { run, request };
 }
 

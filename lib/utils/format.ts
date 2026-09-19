@@ -23,12 +23,20 @@ export function formatFrequency(code: string): string {
   return FREQUENCIES[code] ?? code;
 }
 
+/**
+ * An excipient concentration in mg/mL with at least one decimal place, as the screens show it:
+ * 1 → "1.0", 0.2 → "0.2", 0.125 → "0.125". Digits are only added, never rounded away.
+ */
+export function formatConc(mgPerMl: number): string {
+  return Number.isInteger(mgPerMl) ? mgPerMl.toFixed(1) : String(mgPerMl);
+}
+
 /** Run header context line, e.g. `SC · 150 mg every 2 weeks · 0.2 mg/mL excipient · stored at 25 °C`. */
 export function formatContextLine(context: RunContext): string {
   return [
     context.route,
     `${context.dose.value} ${context.dose.unit} ${formatFrequency(context.frequency)}`,
-    `${context.conc_mg_mL} mg/mL excipient`,
+    `${formatConc(context.conc_mg_mL)} mg/mL excipient`,
     `stored at ${formatTemp(context.storage_C)}`,
   ].join(" · ");
 }

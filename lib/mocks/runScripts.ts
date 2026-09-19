@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { endpointSetIdSchema } from "./endpoints";
 import { runSummarySchema, stepKeys, type StepKey, type Steps } from "@/lib/types/domain";
 import {
   runScriptSchema,
@@ -45,6 +46,8 @@ export const storedRunSchema = runSummarySchema.extend({
       by: z.string(),
     })
     .optional(),
+  /** Which endpoint fixture the dossier shows (Build 04); null when there is none. */
+  endpointSet: endpointSetIdSchema.nullable().default(null),
   /** Retries of a failed step, oldest first. */
   retries: z.array(z.object({ step: z.enum(stepKeys), at: z.number().int().nonnegative() })),
 });
@@ -78,6 +81,14 @@ export const HAZARD_FAILURE: StepFailure = {
 
 /** The failed step's one-line note in the progress strip (S06). */
 const HAZARD_FAILED_NOTE = "Failed · HTTP 504";
+
+/** Step done-notes for ALX-117 × 1N8Z (S15): a novel excipient entered as SMILES. */
+export const ALX117_1N8Z_NOTES = {
+  identity: "User SMILES · no registry match",
+  precedent: "No precedent found",
+  hazard: "8 endpoints",
+  liability: "4 sites on 1N8Z",
+} as const;
 
 /** Step done-notes for the PS80 × 1N8Z screens; other runs just say "Complete". */
 export const PS80_1N8Z_NOTES = {

@@ -1,5 +1,5 @@
 import { runRecordSchema, type RunRecord } from "@/lib/types/domain";
-import { exampleSchema, type Example } from "@/lib/types/runInput";
+import { exampleSchema, type Example, type PolymerInput } from "@/lib/types/runInput";
 
 // Titles, IDs and statuses come from the reference screens (C01). Where a fixture doesn't
 // carry a value, it is null and the UI shows a visible [PLACEHOLDER]; nothing is invented.
@@ -116,3 +116,13 @@ export const EXAMPLE: Example = exampleSchema.parse({
     context: PS80_CONTEXT,
   },
 });
+
+// ALX-117 (PEG-b-PLGA) polymer fields as shown in S15's input panel. The repeat unit and the
+// PLGA degree of polymerisation are cut off in the image, so the missing parts stay visible
+// placeholders rather than being completed from chemistry.
+export const ALX117_POLYMER: PolymerInput = {
+  repeatUnit: "-(OCH2CH2)- / -(OCH(CH3)CO)-[PLACEHOLDER]",
+  endGroups: "Methoxy / –OH",
+  dp: "PEG ≈ 45, PLGA [PLACEHOLDER]",
+  residualMonomers: ["Lactide", "glycolide"],
+};

@@ -126,7 +126,7 @@ Rules:
   "novelForRoute": false,
   "endpoints": [ { "id":"perox","name":"Peroxide impurities → Met oxidation","subtitle":"This Fab",
                    "verdict":"alert","grade":"B","basis":"...","ood":null,
-                   "sources":[{"title":"...","meta":"Snapshot 2026-07-01"}] } ],
+                   "sources":[{"title":"...","meta":"Snapshot 2026-07-01"}], "step":"hazard" } ],
   "liability": { "structure":"1N8Z", "sites":[ {"id":"HM107","chain":"H","positions":[107],"label":"HC Met107",
                  "kind":"Oxidation","region":"CDR-H3","exposure":"...","pathway":"...",
                  "severity":{"4":"Medium","25":"High"},"grade":"C","mitigation":"..."} ],
@@ -140,6 +140,8 @@ Rules:
 }
 ```
 Protein sources (added 2026-09-19): `{source:"pdb", id, chains, excludedChains}` · `{source:"uniprot", id}` · `{source:"sequence", fasta}` · `{source:"upload", fileName, format:"pdb"|"mmcif"}`. Only the active source is sent; Phase 1 uploads send file metadata only.
+
+Endpoint `step` (added 2026-09-19, Build 04): `"precedent" | "hazard"`, the run step that produced it. After a failed step, the matrix shows only endpoints from completed steps.
 
 No structure editor (removed 2026-09-19): the excipient is entered as a name, CAS or SMILES.
 

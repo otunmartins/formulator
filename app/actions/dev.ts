@@ -8,9 +8,9 @@ import type { RunSummary } from "@/lib/types/domain";
 import type { IdentityHint, StructureInfo } from "@/lib/types/lookups";
 import type { RunRequest } from "@/lib/types/runInput";
 
-// Dev-only: the state switcher's shortcuts to S04–S06. Refused in production builds.
+// Dev-only: the state switcher's shortcuts to S04–S07 and S15. Refused in production builds.
 
-const devRunInput = z.object({ state: z.enum(["S04", "S05", "S06"]) });
+const devRunInput = z.object({ state: z.enum(["S04", "S05", "S06", "S07", "S15"]) });
 
 export interface DevRun {
   run: RunSummary;
@@ -19,7 +19,7 @@ export interface DevRun {
   identity: IdentityHint;
 }
 
-/** Starts a run that lands on S04, S05 or S06, with the inputs that produce it. */
+/** Starts a run that lands on S04–S07 or S15, with the inputs that produce it. */
 export async function startDevRun(input: unknown): Promise<ActionResult<DevRun>> {
   if (process.env.NODE_ENV === "production") {
     return fail("forbidden", "The state switcher is only available in development.");

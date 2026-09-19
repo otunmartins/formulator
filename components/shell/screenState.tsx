@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type Dispatch } from "react";
 import type { Mode, RunSummary } from "@/lib/types/domain";
+import type { Dossier } from "@/lib/types/dossier";
 import type { RunEvents } from "@/lib/types/runEvents";
 
 // Screen-wide UI state (foundation state model), held in one reducer so later builds
@@ -9,7 +10,7 @@ import type { RunEvents } from "@/lib/types/runEvents";
 
 export type LoadedHeader = { kind: "empty" } | { kind: "run"; run: RunSummary };
 
-export type DevState = "S01" | "C01" | "C02" | "C03" | "S04" | "S05" | "S06";
+export type DevState = "S01" | "C01" | "C02" | "C03" | "S04" | "S05" | "S06" | "S07" | "S15";
 export type OpenMenu = "recent" | "user" | null;
 
 export interface ScreenState {
@@ -22,6 +23,10 @@ export interface ScreenState {
   events: RunEvents | null;
   /** Bumped to (re)start polling, e.g. after "Use and continue" or "Retry". */
   pollKey: number;
+  /** The loaded run's verdict matrix, once it has results (complete, or partial after a failure). */
+  dossier: Dossier | null;
+  /** Endpoint rows expanded to show their sources (foundation: `selectedEndpointIds`). */
+  selectedEndpointIds: ReadonlySet<string>;
   drawer: "ask" | "manifest" | null;
   openMenu: OpenMenu;
 }
@@ -34,6 +39,8 @@ export type ScreenAction =
   | { type: "runEvents"; events: RunEvents }
   /** The run moved on after a user action (resolve or retry): show it and poll again. */
   | { type: "runResumed"; events: RunEvents }
+  | { type: "dossierLoaded"; dossier: Dossier }
+  | { type: "toggleEndpoint"; id: string }
   | { type: "workspaceChanged" }
   | { type: "openDrawer"; drawer: "ask" | "manifest" }
   | { type: "closeDrawer" }
@@ -47,6 +54,8 @@ export const initialScreenState: ScreenState = {
   headerLoading: false,
   events: null,
   pollKey: 0,
+  dossier: null,
+  selectedEndpointIds: new Set(),
   drawer: null,
   openMenu: null,
 };
@@ -67,6 +76,8 @@ export function screenReducer(state: ScreenState, action: ScreenAction): ScreenS
         headerLoading: false,
         events: null,
         pollKey: state.pollKey + 1,
+        dossier: null,
+        selectedEndpointIds: new Set(),
       };
     case "runEvents":
       // Ignore a late response for a run that is no longer loaded.
@@ -78,7 +89,19 @@ export function screenReducer(state: ScreenState, action: ScreenAction): ScreenS
       if (state.header.kind !== "run" || state.header.run.runId !== action.events.runId) {
         return state;
       }
-      return { ...state, events: action.events, pollKey: state.pollKey + 1 };
+      // Results change after a resume or retry; the dossier is fetched again when it settles.
+      return { ...state, events: action.events, pollKey: state.pollKey + 1, dossier: null };
+    case "dossierLoaded":
+      if (state.header.kind !== "run" || state.header.run.runId !== action.dossier.runId) {
+        return state;
+      }
+      return { ...state, dossier: action.dossier };
+    case "toggleEndpoint": {
+      const next = new Set(state.selectedEndpointIds);
+      if (next.has(action.id)) next.delete(action.id);
+      else next.add(action.id);
+      return { ...state, selectedEndpointIds: next };
+    }
     case "workspaceChanged":
       // A loaded run belonged to the previous workspace; start a fresh screen.
       return {
@@ -86,6 +109,8 @@ export function screenReducer(state: ScreenState, action: ScreenAction): ScreenS
         header: { kind: "empty" },
         headerLoading: false,
         events: null,
+        dossier: null,
+        selectedEndpointIds: new Set(),
         openMenu: null,
       };
     case "openDrawer":
@@ -114,10 +139,12 @@ function devState(state: ScreenState, target: DevState): ScreenState {
       return { ...state, drawer: null, panelCollapsed: false, openMenu: "user" };
     case "C03":
       return { ...state, drawer: null, panelCollapsed: true, openMenu: null };
-    // S04–S06 start a real (backdated) mock run; see DevStateSwitcher.
+    // S04–S15 start a real (backdated) mock run; see DevStateSwitcher.
     case "S04":
     case "S05":
     case "S06":
+    case "S07":
+    case "S15":
       return { ...state, drawer: null, panelCollapsed: false, openMenu: null };
     default: {
       const unreachable: never = target;

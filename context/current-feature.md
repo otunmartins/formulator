@@ -57,7 +57,7 @@ Decided myself:
 - [x] 4. feat(run): `useRunEvents` polling hook into screen state; progress strip states with animated tick and spinner (reduced motion honoured); skeleton matrix with section reveal; Load example fills and starts.
 - [x] 5. feat(run): S05 identity card (candidate radios, override field, "Use and continue", validation), run resumes at Precedent.
 - [x] 6. feat(run): S06 error banner with "Retry hazard step"; hand-off matrix card (partial and complete); review bar gating; tablet collapse after completion.
-- [ ] 7. feat(dev): switcher S04, S05, S06.
+- [x] 7. feat(dev): switcher S04, S05, S06.
 - [ ] 8. test: component tests (strip states, resolver, banner, gating) + e2e (happy path to complete, unresolved → override → resumes at Precedent, hazard failure → retry keeps completed steps); keep earlier tests green.
 
 **New dependencies:** none.

@@ -1,6 +1,6 @@
 # Current Build
 
-Status: review
+Status: ready
 Build: 01 · App shell (common to every screen)
 Spec: context/features/01-app-shell.spec.md
 Image: context/screenshots/01-app-shell.png
@@ -14,21 +14,21 @@ Build the frame every later build plugs into: project setup, design tokens, shar
 
 ## Done when
 Spec:
-- [ ] S01 and C01–C03 match their screens.
-- [ ] Every interactive element can be reached and used with the keyboard, with visible focus.
-- [ ] Components never import mocks or Prisma; only `lib/data/` reads `USE_MOCKS`.
-- [ ] Every `lib/data/` function scopes by the session user and workspace.
-- [ ] The footer disclaimer is visible in every state.
+- [x] S01 and C01–C03 match their screens. (Recorded deviations: panel has headings only until Build 02; Run manifest disabled; C01–C03 backgrounds show the empty screen, not a Build 04 dossier.)
+- [x] Every interactive element can be reached and used with the keyboard, with visible focus. (Disabled review-bar buttons are skipped by design; see Review.)
+- [x] Components never import mocks or Prisma; only `lib/data/` reads `USE_MOCKS`. (guard tests)
+- [x] Every `lib/data/` function scopes by the session user and workspace. (scoping unit tests; 404 for another user's run on the prod build)
+- [x] The footer disclaimer is visible in every state. (e2e, every test)
 
 Foundation (every build):
-- [ ] The build's screens match their reference images in layout and copy.
-- [ ] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
-- [ ] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client.
-- [ ] Never "safe" as a verdict, no overall score, and status is never shown by colour alone.
-- [ ] Keyboard-navigable with visible focus; honours prefers-reduced-motion.
-- [ ] The footer disclaimer is visible; no project layer exists.
-- [ ] Stubbed actions show "Not connected yet" rather than failing silently.
-- [ ] Nothing from a later build is started early.
+- [x] The build's screens match their reference images in layout and copy. (same deviations as above)
+- [x] No backend logic: data goes through `lib/data/` and returns mocks; flipping `USE_MOCKS` touches only `lib/data/`.
+- [x] Every `lib/data/` function scopes by the session user and workspace; none accepts an owner or workspace ID from the client. (`switchWorkspace` takes a target ID but checks it against the session.)
+- [x] Never "safe" as a verdict, no overall score, and status is never shown by colour alone. (guard tests; chips always carry text)
+- [x] Keyboard-navigable with visible focus; honours prefers-reduced-motion. (e2e keyboard test; transitions 0.15 s → 0 under `reduce`)
+- [x] The footer disclaimer is visible; no project layer exists.
+- [x] Stubbed actions show "Not connected yet" rather than failing silently. (Run screen, Sign out, Ask drawer)
+- [x] Nothing from a later build is started early.
 
 ## Open questions
 None blocking. (Image cites `docs/builds/...` paths; repo uses `context/features/`. Doc-only, no action.)
@@ -92,7 +92,10 @@ Reviewed 2026-09-19 against the spec, S01/C01–C03 image, foundation and standa
 - [low] Run manifest is muted/disabled, the image shows an active link: open (recorded decision).
 
 ## Tests
-—
+typecheck ✓ · lint ✓ · format ✓ · tests ✓ (50 unit/component/guard passed) · e2e ✓ (10 passed) · build ✓ · visual check ✓
+- Visual: S01, C01, C02, C03 at 1440 (via the dev switcher), plus 1280 and 1024; loaded run header.
+- Keyboard: focus ring visible; menus (arrows, Esc returns focus); drawer traps Tab, closes on Esc and returns focus to the Ask tab.
+- prefers-reduced-motion: transitions drop from 0.15 s to 0.
 
 ## Log
 - 2026-09-19 — Loaded Build 01 · App shell. No dependencies. Spec and image read; 8 open questions recorded.
@@ -102,3 +105,4 @@ Reviewed 2026-09-19 against the spec, S01/C01–C03 image, foundation and standa
 - 2026-09-19 — Tasks 7–10 in one commit (the files interlock). Screen state is one reducer + context (`components/shell/screenState.tsx`). Dev switcher sits inline in the top bar (dev only), so it can't overlap menus. Opening a batch run switches mode to Batch. Review-bar chip reflects a loaded run's review status; all its actions stay disabled. Run screen and Sign out show "Not connected yet". e2e now reuses the dev server on :3000 (one was already running). Visual check done at 1440 (S01, C01–C03, loaded run) and 1024.
 - 2026-09-19 — Task 11: 9 e2e tests (S01, C01, C02, C03, keyboard, tablet) + smoke; guard tests (no "safe", no overall score, mocks/Prisma and USE_MOCKS only in lib/data, lib/data server-only, no user/workspace ID params). All 11 tasks done. Checks: typecheck ✓, lint ✓, unit 48/48 ✓, e2e 10/10 ✓, `pnpm build` ✓; prod HTML has no dev switcher; events route returns 404 for another user's run, 400 for a bad ID. Next: `/feature review`.
 - 2026-09-19 — review: 3 medium + 4 low fixed, 5 low open (see Review). typecheck ✓ lint ✓ format ✓ unit 50/50 ✓ e2e 10/10 ✓. Status review.
+- 2026-09-19 — test: all checks pass (unit 50, e2e 10, build ✓); visual + keyboard + reduced-motion verified; all Done-when ticked. Status ready.

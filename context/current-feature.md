@@ -58,7 +58,7 @@ Decided myself:
 - [x] 5. feat(run): S05 identity card (candidate radios, override field, "Use and continue", validation), run resumes at Precedent.
 - [x] 6. feat(run): S06 error banner with "Retry hazard step"; hand-off matrix card (partial and complete); review bar gating; tablet collapse after completion.
 - [x] 7. feat(dev): switcher S04, S05, S06.
-- [ ] 8. test: component tests (strip states, resolver, banner, gating) + e2e (happy path to complete, unresolved → override → resumes at Precedent, hazard failure → retry keeps completed steps); keep earlier tests green.
+- [x] 8. test: component tests (strip states, resolver, banner, gating) + e2e (happy path to complete, unresolved → override → resumes at Precedent, hazard failure → retry keeps completed steps); keep earlier tests green.
 
 **New dependencies:** none.
 
@@ -73,3 +73,4 @@ Decided myself:
 - 2026-09-19 — start: 4 questions answered (see Decisions); plan written, 8 tasks. Status planned.
 - 2026-09-19 — Tasks 1–2: timeline is a pure function of start time + user actions (no timers or server memory). Cookie store keeps up to 6 runs, dropping the oldest to stay under 3600 chars (browser cookie limit ~4 KB). Run IDs come from the clock and skip IDs already stored (a per-instance counter isn't safe on serverless). Resolved runs keep "Complete" notes for later steps (only the identity note changes).
 - 2026-09-19 — Task 3: overrides are checked on the server: CAS numbers must have a valid check digit, SMILES get a loose shape check (allowed characters, balanced brackets; real parsing is phase 2). `startRun` calls `refresh()` so the run appears in Recent runs. The guard test caught the dev action importing `lib/mocks`; the backdating moved into `lib/data` (`createDevRun`).
+- 2026-09-19 — Tasks 4–8: `RunArea` owns the strip and what sits under it (empty card, skeleton, identity card, error banner + precedent-only hand-off, complete hand-off). Load example and Run share `useStartRun`; Load example no longer sets the header itself (the started run does). Sign off enables only on complete (stub); exports/share enable on complete or partial (stub); Run manifest stays disabled (Build 07). Tablet (≤1180 px) collapses the panel when a completed run arrives, including opening a completed run. Truncated step notes carry a `title`. Checks: typecheck ✓ · lint ✓ · unit 132 ✓ · e2e 21 ✓ · visual S04/S05/S06 at 1440 ✓.
